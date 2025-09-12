@@ -1,0 +1,10 @@
+1,Rustam,Rajabov,1982-06-18,Sadarayxon,Tashkent,null,17100,Uzbekistan
+2,Ulugbek,Rustamov,1975-09-27,Chilonzor,Tashkent,null,10528,Uzbekistan
+3,Shahnoza,Yoqubova,1998-03-20,Shaykhontohur,Tashkent,null,12238,Uzbekistan
+4,Anvar,Umarov,1969-01-03,Shaykhontohur,null,null,null,Uzbekistan
+5,Dilshod,Yoqubov,1962-10-10,Yunusobod,Tashkent,null,null,Uzbekistan
+6,Sitora,Ganieva,1989-04-23,null,null,null,null,Uzbekistan
+7,Shaxzoda,Ergasheva,1969-08-21,Oltinko'l,Andijan,null,19486,Uzbekistan
+8,Anvar,Rakhmatov,2002-02-26,Marhamat,Andijan,null,10251,Uzbekistan
+9,Bekzod,Oripov,2002-12-14,null,null,null,10780,Uzbekistan
+10,Gulbahor,Yuldasheva,1990-10-01,null,Samarkand,null,null,Uzbekistan

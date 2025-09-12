@@ -1,0 +1,10 @@
+1,1,1,beginner,cardio,2025-09-12;17:30,60
+2,2,1,beginner,cardio,2025-09-12;17:30,60
+3,3,1,beginner,cardio,2025-09-12;17:30,60
+4,4,1,beginner,cardio,2025-09-12;17:30,60
+5,5,1,beginner,cardio,2025-09-12;17:30,60
+6,6,3,inner peace,yoga,2025-10-05;6:30,30
+7,7,3,inner peace,yoga,2025-10-05;6:30,30
+8,8,2,be strong,weightlifting,2025-09-25;13:20,60
+9,9,2,be strong,weightlifting,2025-09-25;13:20,60
+10,10,3,inner peace,yoga,2025-10-05;6:30,30

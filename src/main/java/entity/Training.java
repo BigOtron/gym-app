@@ -12,7 +12,10 @@ public class Training {
     private LocalDateTime trainingTime;
     private Duration duration;
 
-    public Training(String trainingName, TrainingType trainingType, LocalDateTime trainingTime, Duration duration) {
+    public Training(long trainingId, long traineeId, long trainerId, String trainingName, TrainingType trainingType, LocalDateTime trainingTime, Duration duration) {
+        this.trainingId = trainingId;
+        this.traineeId = traineeId;
+        this.trainerId = trainerId;
         this.trainingName = trainingName;
         this.trainingType = trainingType;
         this.trainingTime = trainingTime;
