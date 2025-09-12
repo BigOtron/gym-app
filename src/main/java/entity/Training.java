@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class Training {
+    private long trainingId;
     private long traineeId;
     private long trainerId;
     private String trainingName;
@@ -69,6 +70,15 @@ public class Training {
 
     public Training setDuration(Duration duration) {
         this.duration = duration;
+        return this;
+    }
+
+    public long getTrainingId() {
+        return trainingId;
+    }
+
+    public Training setTrainingId(long trainingId) {
+        this.trainingId = trainingId;
         return this;
     }
 }
