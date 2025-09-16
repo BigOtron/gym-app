@@ -13,6 +13,14 @@ import storage.TrainerStorage;
 import java.util.Map;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
+/**
+ * DAO for managing {@link Trainer} entities.
+ * <p>
+ * Provides CRUD operations on trainers stored in the underlying
+ * {@link TrainerStorage}. Maintains an internal map of trainer IDs to Trainer objects.
+ * All operations are logged using SLF4J.
+ * <p>
+ */
 @Repository
 @Scope(SCOPE_SINGLETON)
 public class TrainerDAO {

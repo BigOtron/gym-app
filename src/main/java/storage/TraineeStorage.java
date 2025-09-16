@@ -16,6 +16,23 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Spring component responsible for storing {@link Trainee} entities.
+ * <p>
+ * Loads trainee data from an external CSV file specified by the property
+ * {@code storage.file.path.trainee} during initialization. Each trainee
+ * is assigned a generated password using {@link PasswordGenerator}.
+ * <p>
+ * Provides access to the in-memory storage map via {@link #getStorage()}.
+ * Each line in the CSV file should represent a training record with comma-separated values:
+ *   <ul>
+ *        <li>Trainee ID</li>
+ *        <li>Trainee first name</li>
+ *        <li>Trainee last name</li>
+ *        <li>Trainee date of birth</li>
+ *        <li>Trainee address</li>
+ *    </ul>
+ */
 @Component(value = "traineeStorage")
 public class TraineeStorage {
     private final Map<Long, Trainee> storage = new HashMap<>();

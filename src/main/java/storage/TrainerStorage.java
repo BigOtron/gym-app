@@ -14,7 +14,25 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * TrainerStorage is a component responsible for
+ * loading and storing Trainer entities from an external CSV file.
+ * <p>
+ * Each Trainer has a unique user ID and may have multiple specializations.
+ * A password is generated for each Trainer using {@link PasswordGenerator}.
+ * </p>
+ * <p>
+ * The storage is represented internally as a {@link Map} with the trainer's user ID as the key
+ * and the corresponding {@link Trainer} object as the value.
+ * Each line in the CSV file should represent a training record with comma-separated values:
+ * <ul>
+ *      <li>Trainer ID</li>
+ *      <li>Trainer first name</li>
+ *      <li>Trainer last name</li>
+ *      <li>Trainer Specialization list (e.g., CARDIO, RUNNING)</li>
+ *  </ul>
+ * </p>
+ */
 @Component(value = "trainerStorage")
 public class TrainerStorage {
     private final Map<Long, Trainer> storage = new HashMap<>();

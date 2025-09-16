@@ -13,6 +13,13 @@ import java.util.Map;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
+/**
+ * DAO for managing {@link Trainee} entities.
+ * <p>
+ * This class provides CRUD operations on trainees stored in the underlying
+ * {@link TraineeStorage}. It maintains an internal map of trainee IDs to Trainee objects
+ * <p>
+ */
 @Repository
 @Scope(SCOPE_SINGLETON)
 public class TraineeDAO {

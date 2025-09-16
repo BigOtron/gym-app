@@ -18,6 +18,30 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * TrainingStorage is a component responsible for loading and storing {@link Training} entities.
+ * <p>
+ * Each Training represents a session conducted by a trainer for a trainee, including information
+ * such as training type, time, and duration.
+ * </p>
+ * <p>
+ * The storage is internally represented as a {@link Map} with the training ID as the key
+ * and the corresponding {@link Training} object as the value.
+ * </p>
+ * <p>
+ * This class reads training data from an external CSV file during application initialization.
+ * Each line in the CSV file should represent a training record with comma-separated values:
+ * <ul>
+ *     <li>Training ID</li>
+ *     <li>Trainee ID</li>
+ *     <li>Trainer ID</li>
+ *     <li>Training Name</li>
+ *     <li>Training Type (e.g., CARDIO, RUNNING)</li>
+ *     <li>Training Time (formatted as yyyy-MM-dd H:mm)</li>
+ *     <li>Duration in minutes</li>
+ * </ul>
+ * </p>
+ */
 @Component(value = "trainingStorage")
 public class TrainingStorage {
     private final Map<Long, Training> storage = new HashMap<>();

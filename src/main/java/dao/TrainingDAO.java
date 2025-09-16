@@ -13,6 +13,12 @@ import storage.TrainingStorage;
 import java.util.Map;
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
+/**
+ * DAO for managing {@link Training} entities.
+ * <p>
+ * Provides methods to create and retrieve trainings stored in the underlying
+ * {@link TrainingStorage}. Maintains an internal map of training IDs to Training objects.
+ */
 @Repository
 @Scope(SCOPE_SINGLETON)
 public class TrainingDAO {
