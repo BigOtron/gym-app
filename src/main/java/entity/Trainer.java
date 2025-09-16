@@ -6,6 +6,8 @@ public class Trainer extends User{
     private long userId;
     private List<TrainingType> specialization;
 
+    public Trainer() {}
+
     public Trainer(String firstName, String lastName, String username,
                    String password, List<TrainingType> specialization) {
         super(firstName, lastName, username, password);

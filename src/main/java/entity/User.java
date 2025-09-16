@@ -7,6 +7,8 @@ public class User {
     private String password; // TODO - hash the password
     private boolean isActive;
 
+    public User() {}
+
     public User(String firstName, String lastName, String username, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

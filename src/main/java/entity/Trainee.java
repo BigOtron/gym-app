@@ -14,30 +14,29 @@ public class Trainee extends User {
         this.address = address;
     }
 
+    public Trainee() {}
+
     public long getUserId() {
         return userId;
     }
 
-    public Trainee setUserId(long userId) {
+    public void setUserId(long userId) {
         this.userId = userId;
-        return this;
     }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public Trainee setDateOfBirth(LocalDate dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
-        return this;
     }
 
     public Address getAddress() {
         return address;
     }
 
-    public Trainee setAddress(Address address) {
+    public void setAddress(Address address) {
         this.address = address;
-        return this;
     }
 }
