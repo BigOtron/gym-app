@@ -3,6 +3,8 @@ package storage;
 import entity.Training;
 import entity.TrainingType;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,9 +18,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component(value = "trainingStorage")
 public class TrainingStorage {
     private final Map<Long, Training> storage = new HashMap<>();
+    private final static Logger logger  = LoggerFactory.getLogger(TrainingStorage.class);
 
     @Value("${storage.file.path.training}")
     private String filePath;
@@ -29,9 +32,11 @@ public class TrainingStorage {
 
     @PostConstruct
     public void init() throws IOException {
+        logger.info("Initializing TrainingStorage from file: {}", filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                logger.info("Reading line: {}", line);
                 String[] lineData = line.split(",");
                 Training training = parseTraining(lineData);
                 storage.put(training.getTrainingId(), training);

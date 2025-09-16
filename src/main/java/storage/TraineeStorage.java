@@ -3,6 +3,8 @@ package storage;
 import entity.Address;
 import entity.Trainee;
 import jakarta.annotation.PostConstruct;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import utility.PasswordGenerator;
@@ -14,10 +16,11 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
+@Component(value = "traineeStorage")
 public class TraineeStorage {
     private final Map<Long, Trainee> storage = new HashMap<>();
     private final PasswordGenerator passwordGenerator;
+    private static final Logger logger = LoggerFactory.getLogger(TraineeStorage.class);
 
     @Value("${storage.file.path.trainee}")
     private String filePath;
@@ -32,9 +35,11 @@ public class TraineeStorage {
 
     @PostConstruct
     public void init() throws IOException {
+        logger.info("Initializing TraineeStorage from file: {}", filePath);
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line;
             while ((line = reader.readLine()) != null) {
+                logger.info("Reading file data: {}", line);
                 String[] lineData = line.split(",");
                 Trainee trainee = parseTrainee(lineData);
                 storage.put(trainee.getUserId(), trainee);
