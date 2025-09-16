@@ -1,6 +1,7 @@
 package entity;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Trainee extends User {
     private long userId;
@@ -38,5 +39,18 @@ public class Trainee extends User {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Trainee trainee)) return false;
+        return Objects.equals(getFirstName(), trainee.getFirstName()) &&
+                Objects.equals(getLastName(), trainee.getLastName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getFirstName(), getLastName());
     }
 }

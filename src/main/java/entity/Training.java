@@ -28,62 +28,55 @@ public class Training {
         return traineeId;
     }
 
-    public Training setTraineeId(long traineeId) {
+    public void setTraineeId(long traineeId) {
         this.traineeId = traineeId;
-        return this;
     }
 
     public long getTrainerId() {
         return trainerId;
     }
 
-    public Training setTrainerId(long trainerId) {
+    public void setTrainerId(long trainerId) {
         this.trainerId = trainerId;
-        return this;
     }
 
     public String getTrainingName() {
         return trainingName;
     }
 
-    public Training setTrainingName(String trainingName) {
+    public void setTrainingName(String trainingName) {
         this.trainingName = trainingName;
-        return this;
     }
 
     public TrainingType getTrainingType() {
         return trainingType;
     }
 
-    public Training setTrainingType(TrainingType trainingType) {
+    public void setTrainingType(TrainingType trainingType) {
         this.trainingType = trainingType;
-        return this;
     }
 
     public LocalDateTime getTrainingTime() {
         return trainingTime;
     }
 
-    public Training setTrainingTime(LocalDateTime trainingTime) {
+    public void setTrainingTime(LocalDateTime trainingTime) {
         this.trainingTime = trainingTime;
-        return this;
     }
 
     public Duration getDuration() {
         return duration;
     }
 
-    public Training setDuration(Duration duration) {
+    public void setDuration(Duration duration) {
         this.duration = duration;
-        return this;
     }
 
     public long getTrainingId() {
         return trainingId;
     }
 
-    public Training setTrainingId(long trainingId) {
+    public void setTrainingId(long trainingId) {
         this.trainingId = trainingId;
-        return this;
     }
 }

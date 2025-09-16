@@ -23,18 +23,16 @@ public class Address {
         return street;
     }
 
-    public Address setStreet(String street) {
+    public void setStreet(String street) {
         this.street = street;
-        return this;
     }
 
     public String getCity() {
         return city;
     }
 
-    public Address setCity(String city) {
+    public void setCity(String city) {
         this.city = city;
-        return this;
     }
 
     public String getState() {
@@ -50,17 +48,15 @@ public class Address {
         return postalCode;
     }
 
-    public Address setPostalCode(String postalCode) {
+    public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
-        return this;
     }
 
     public String getCountry() {
         return country;
     }
 
-    public Address setCountry(String country) {
+    public void setCountry(String country) {
         this.country = country;
-        return this;
     }
 }

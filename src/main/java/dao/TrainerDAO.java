@@ -26,6 +26,12 @@ public class TrainerDAO {
     }
 
     public void createTrainer(Trainer trainer) {
+        if (trainerMap.containsValue(trainer)) {
+            long count = trainerMap.values().stream()
+                    .filter(s-> s.getFirstName().equals(trainer.getFirstName()))
+                    .count();
+            trainer.setUsername(count + trainer.getUsername());
+        }
         trainerMap.put(trainer.getUserId(), trainer);
         logger.info("Created trainer with ID {} and username '{}'",
                 trainer.getUserId(), trainer.getUsername());

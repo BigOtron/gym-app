@@ -25,6 +25,12 @@ public class TraineeDAO {
     }
 
     public void createTrainee(Trainee trainee) {
+        if (traineeMap.containsValue(trainee)) {
+            long count = traineeMap.values().stream()
+                    .filter(s-> s.getFirstName().equals(trainee.getFirstName()))
+                    .count();
+            trainee.setUsername(count + trainee.getUsername());
+        }
         traineeMap.put(trainee.getUserId(), trainee);
         logger.info("Created training with ID {} and username '{}'",
                 trainee.getUserId(), trainee.getUsername());
