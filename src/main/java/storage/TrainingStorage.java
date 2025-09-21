@@ -42,7 +42,7 @@ import java.util.Map;
  * </ul>
  * </p>
  */
-@Component(value = "trainingStorage")
+@Component
 public class TrainingStorage {
     private final Map<Long, Training> storage = new HashMap<>();
     private final static Logger logger  = LoggerFactory.getLogger(TrainingStorage.class);

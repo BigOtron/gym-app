@@ -36,7 +36,7 @@ import java.util.Map;
  *  </ul>
  * </p>
  */
-@Component(value = "trainerStorage")
+@Component
 public class TrainerStorage {
     private final Map<Long, Trainer> storage = new HashMap<>();
     private final PasswordGenerator passwordGenerator;
