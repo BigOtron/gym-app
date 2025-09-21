@@ -10,7 +10,7 @@ repositories {
 }
 
 ext {
-    springVersion = '6.3'
+    springVersion = '6.2.11'
     jakartaAnnotationVersion = '2.1.1'
     slf4jVersion = '2.0.9'
     logbackVersion = '1.5.13'

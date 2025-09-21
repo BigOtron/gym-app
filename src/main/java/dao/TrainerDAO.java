@@ -6,12 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import storage.TrainerStorage;
 
 import java.util.Map;
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
 /**
  * DAO for managing {@link Trainer} entities.
@@ -22,7 +20,6 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
  * <p>
  */
 @Repository
-@Scope(SCOPE_SINGLETON)
 public class TrainerDAO {
     private final Map<Long, Trainer> trainerMap;
     private static final Logger logger = LoggerFactory.getLogger(TrainerDAO.class);

@@ -5,13 +5,10 @@ import exceptions.NoSuchTraineeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import storage.TraineeStorage;
 
 import java.util.Map;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
 
 /**
  * DAO for managing {@link Trainee} entities.
@@ -21,7 +18,6 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
  * <p>
  */
 @Repository
-@Scope(SCOPE_SINGLETON)
 public class TraineeDAO {
     private final Map<Long, Trainee> traineeMap;
     private static final Logger logger = LoggerFactory.getLogger(TraineeDAO.class);
