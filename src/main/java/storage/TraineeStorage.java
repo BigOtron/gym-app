@@ -33,7 +33,7 @@ import java.util.Map;
  *        <li>Trainee address</li>
  *    </ul>
  */
-@Component(value = "traineeStorage")
+@Component
 public class TraineeStorage {
     private final Map<Long, Trainee> storage = new HashMap<>();
     private final PasswordGenerator passwordGenerator;
