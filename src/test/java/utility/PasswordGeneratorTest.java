@@ -1,7 +1,6 @@
-package utilityTest;
+package utility;
 
 import org.junit.jupiter.api.Test;
-import utility.PasswordGenerator;
 
 import static org.junit.jupiter.api.Assertions.*;
 

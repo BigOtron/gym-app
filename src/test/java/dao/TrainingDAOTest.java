@@ -1,6 +1,5 @@
-package daoTest;
+package dao;
 
-import dao.TrainingDAO;
 import entity.Training;
 import exceptions.NoSuchTrainingException;
 import org.junit.jupiter.api.BeforeEach;

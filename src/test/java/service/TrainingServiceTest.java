@@ -1,11 +1,10 @@
-package serviceTest;
+package service;
 
 import dao.TrainingDAO;
 import entity.Training;
 import exceptions.NoSuchTrainingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.TrainingService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;

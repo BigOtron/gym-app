@@ -1,10 +1,9 @@
-package storageTest;
+package storage;
 
 import entity.Trainer;
 import entity.TrainingType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import storage.TrainerStorage;
 import utility.PasswordGenerator;
 
 import java.io.BufferedWriter;

@@ -1,10 +1,9 @@
-package storageTest;
+package storage;
 
 import entity.Training;
 import entity.TrainingType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import storage.TrainingStorage;
 
 import java.io.BufferedWriter;
 import java.io.File;
