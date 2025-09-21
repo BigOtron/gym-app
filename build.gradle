@@ -9,17 +9,29 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'org.springframework:spring-context:6.2.7'
-    implementation 'jakarta.annotation:jakarta.annotation-api:2.1.1'
-    implementation 'org.slf4j:slf4j-api:2.0.9'
-    runtimeOnly 'ch.qos.logback:logback-classic:1.5.13'
+ext {
+    springVersion = '6.3'
+    jakartaAnnotationVersion = '2.1.1'
+    slf4jVersion = '2.0.9'
+    logbackVersion = '1.5.13'
 
-    testImplementation 'org.springframework:spring-test:6.1.6'
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
-    testImplementation "org.mockito:mockito-core:5.+"
-    testImplementation 'org.assertj:assertj-core:3.26.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+    springTestVersion = '6.2'
+    junitVersion = '5.8.1'
+    mockitoVersion = '5.12.0'   // avoid +
+    assertjVersion = '3.26.0'
+}
+
+dependencies {
+    implementation group: 'org.springframework', name: 'spring-context', version: springVersion
+    implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: jakartaAnnotationVersion
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
+    runtimeOnly group: 'ch.qos.logback', name: 'logback-classic', version: logbackVersion
+
+    testImplementation group: 'org.springframework', name: 'spring-test', version: springTestVersion
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: assertjVersion
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junitVersion
 }
 
 test {
