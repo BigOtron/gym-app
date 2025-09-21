@@ -2,6 +2,7 @@ package dao;
 
 import entity.Trainer;
 import exceptions.NoSuchTrainerException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import java.util.Map;
  * <p>
  */
 @Repository
+@RequiredArgsConstructor
 public class TrainerDAO {
     private final Map<Long, Trainer> trainerMap;
     private static final Logger logger = LoggerFactory.getLogger(TrainerDAO.class);

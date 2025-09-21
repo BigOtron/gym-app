@@ -3,6 +3,7 @@ package dao;
 
 import entity.Training;
 import exceptions.NoSuchTrainingException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +19,7 @@ import java.util.Map;
  * {@link TrainingStorage}. Maintains an internal map of training IDs to Training objects.
  */
 @Repository
+@RequiredArgsConstructor
 public class TrainingDAO {
     private final Map<Long, Training> trainingMap;
     private static final Logger logger = LoggerFactory.getLogger(TrainingDAO.class);

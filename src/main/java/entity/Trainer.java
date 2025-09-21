@@ -1,33 +1,22 @@
 package entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.List;
 import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Trainer extends User{
     private long userId;
     private List<TrainingType> specialization;
 
-    public Trainer() {}
-
     public Trainer(String firstName, String lastName, String username,
                    String password, List<TrainingType> specialization) {
         super(firstName, lastName, username, password);
-        this.specialization = specialization;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public List<TrainingType> getSpecialization() {
-        return specialization;
-    }
-
-    public void setSpecialization(List<TrainingType> specialization) {
         this.specialization = specialization;
     }
 

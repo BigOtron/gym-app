@@ -3,15 +3,13 @@ package service;
 import dao.TrainerDAO;
 import entity.Trainer;
 import exceptions.NoSuchTrainerException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TrainerService {
     private final TrainerDAO trainerDAO;
-
-    public TrainerService(TrainerDAO trainerDAO) {
-        this.trainerDAO = trainerDAO;
-    }
 
     public void createTrainer(Trainer trainer) {
         trainerDAO.createTrainer(trainer);

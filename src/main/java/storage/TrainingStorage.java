@@ -3,6 +3,8 @@ package storage;
 import entity.Training;
 import entity.TrainingType;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,16 +45,14 @@ import java.util.Map;
  * </p>
  */
 @Component
+@Getter
+@RequiredArgsConstructor
 public class TrainingStorage {
     private final Map<Long, Training> storage = new HashMap<>();
     private final static Logger logger  = LoggerFactory.getLogger(TrainingStorage.class);
 
     @Value("${storage.file.path.training}")
     private String filePath;
-
-    public Map<Long, Training> getStorage() {
-        return storage;
-    }
 
     @PostConstruct
     public void init() throws IOException {

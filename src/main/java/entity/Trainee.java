@@ -1,8 +1,15 @@
 package entity;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Getter
+@Setter
+@NoArgsConstructor
 public class Trainee extends User {
     private long userId;
     private LocalDate dateOfBirth;
@@ -12,32 +19,6 @@ public class Trainee extends User {
                    LocalDate dateOfBirth, Address address) {
         super(firstName, lastName, username, password);
         this.dateOfBirth = dateOfBirth;
-        this.address = address;
-    }
-
-    public Trainee() {}
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public void setDateOfBirth(LocalDate dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
         this.address = address;
     }
 

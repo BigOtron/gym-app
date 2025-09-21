@@ -3,15 +3,13 @@ package service;
 import dao.TraineeDAO;
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class TraineeService {
     private final TraineeDAO traineeDAO;
-
-    public TraineeService(TraineeDAO traineeDAO) {
-        this.traineeDAO = traineeDAO;
-    }
 
     public void createTrainee(Trainee trainee) {
         traineeDAO.createTrainee(trainee);

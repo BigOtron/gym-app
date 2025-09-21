@@ -2,6 +2,7 @@ package dao;
 
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -18,6 +19,7 @@ import java.util.Map;
  * <p>
  */
 @Repository
+@RequiredArgsConstructor
 public class TraineeDAO {
     private final Map<Long, Trainee> traineeMap;
     private static final Logger logger = LoggerFactory.getLogger(TraineeDAO.class);

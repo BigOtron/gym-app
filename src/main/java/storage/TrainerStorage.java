@@ -3,6 +3,8 @@ package storage;
 import entity.Trainer;
 import entity.TrainingType;
 import jakarta.annotation.PostConstruct;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +39,8 @@ import java.util.Map;
  * </p>
  */
 @Component
+@RequiredArgsConstructor
+@Getter
 public class TrainerStorage {
     private final Map<Long, Trainer> storage = new HashMap<>();
     private final PasswordGenerator passwordGenerator;
@@ -44,14 +48,6 @@ public class TrainerStorage {
 
     @Value("${storage.file.path.trainer}")
     private String filePath;
-
-    public TrainerStorage(PasswordGenerator passwordGenerator) {
-        this.passwordGenerator = passwordGenerator;
-    }
-
-    public Map<Long, Trainer> getStorage() {
-        return storage;
-    }
 
     @PostConstruct
     public void init() throws IOException {
