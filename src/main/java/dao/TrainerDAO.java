@@ -1,0 +1,69 @@
+package dao;
+
+import entity.Trainer;
+import exceptions.NoSuchTrainerException;
+import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Repository;
+import storage.TrainerStorage;
+
+import java.util.Map;
+
+/**
+ * DAO for managing {@link Trainer} entities.
+ * <p>
+ * Provides CRUD operations on trainers stored in the underlying
+ * {@link TrainerStorage}. Maintains an internal map of trainer IDs to Trainer objects.
+ * All operations are logged using SLF4J.
+ * <p>
+ */
+@Repository
+@RequiredArgsConstructor
+public class TrainerDAO {
+    private final Map<Long, Trainer> trainerMap;
+    private static final Logger logger = LoggerFactory.getLogger(TrainerDAO.class);
+
+    @Autowired
+    public TrainerDAO(@Qualifier("trainerStorage")  TrainerStorage storage) {
+        trainerMap = storage.getStorage();
+        logger.info("TrainerDAO initialized with {} trainers", trainerMap.size());
+    }
+
+    public void createTrainer(Trainer trainer) {
+        if (trainerMap.containsValue(trainer)) {
+            long count = trainerMap.values().stream()
+                    .filter(s-> s.getFirstName().equals(trainer.getFirstName()))
+                    .count();
+            trainer.setUsername(count + trainer.getUsername());
+        }
+        trainerMap.put(trainer.getUserId(), trainer);
+        logger.info("Created trainer with ID {} and username '{}'",
+                trainer.getUserId(), trainer.getUsername());
+    }
+
+    public void updateTrainer(Trainer trainer) throws NoSuchTrainerException {
+        if (!trainerMap.containsKey(trainer.getUserId())) {
+            logger.warn("Cannot update: Trainer with ID {} does not exist", trainer.getUserId());
+            throw new NoSuchTrainerException();
+        }
+        trainerMap.put(trainer.getUserId(), trainer);
+        logger.info("Updated trainer with ID {} and username '{}'",
+                trainer.getUserId(), trainer.getUsername());
+    }
+
+    public Trainer selectTrainer(long id) throws NoSuchTrainerException {
+        if (!trainerMap.containsKey(id)) {
+            logger.warn("Trainer with ID {} not found", id);
+            throw new NoSuchTrainerException();
+        }
+        Trainer trainer = trainerMap.get(id);
+        logger.debug("Retrieved trainer with ID {} and username '{}'",
+                id, trainer.getUsername());
+        return trainer;
+
+
+    }
+}
