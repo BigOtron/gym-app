@@ -11,18 +11,24 @@ repositories {
 
 ext {
     springVersion = '6.2.11'
+    jpaVersion = '3.2.0'
+    hibernateVersion = '6.6.0.Final'
+    postgreVersion = '42.7.7'
     jakartaAnnotationVersion = '2.1.1'
     slf4jVersion = '2.0.9'
     logbackVersion = '1.5.13'
 
     springTestVersion = '6.2'
     junitVersion = '5.8.1'
-    mockitoVersion = '5.12.0'   // avoid +
+    mockitoVersion = '5.12.0'
     assertjVersion = '3.26.0'
     lombokVersion = '1.18.34'
 }
 
 dependencies {
+    implementation group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: jpaVersion
+    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: hibernateVersion
+    implementation group: 'org.postgresql', name: 'postgresql', version: postgreVersion
     implementation group: 'org.springframework', name: 'spring-context', version: springVersion
     implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: jakartaAnnotationVersion
     implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4jVersion
