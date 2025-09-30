@@ -38,4 +38,18 @@ public class TrainerService {
         trainer.setIsActive(Boolean.FALSE);
         updateTrainer(trainer);
     }
+
+    public boolean validateTrainerCredentials(String username, String password) throws NoSuchTrainerException {
+        Trainer trainer = selectTrainer(username);
+        return trainer.getPasswordHash().equals(password);
+    }
+
+    public void changePassword(String username, String oldPassword, String newPassword) throws NoSuchTrainerException {
+        Trainer trainer = selectTrainer(username);
+        if (!trainer.getPasswordHash().equals(oldPassword)) {
+            throw new IllegalArgumentException("Old password doesn't match");
+        }
+        trainer.setPasswordHash(newPassword);
+        trainerRepository.updateTrainer(trainer);
+    }
 }

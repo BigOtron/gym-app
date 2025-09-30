@@ -40,4 +40,18 @@ public class TraineeService {
     public void deleteTrainee(String username) {
         traineeRepository.deleteTrainee(username);
     }
+
+    public boolean validateTraineeCredentials(String username, String password) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(username);
+        return trainee.getPasswordHash().equals(password);
+    }
+
+    public void changePassword(String username, String oldPassword, String newPassword) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(username);
+        if (!trainee.getPasswordHash().equals(oldPassword)) {
+            throw new IllegalArgumentException("Old password is incorrect");
+        }
+        trainee.setPasswordHash(newPassword);
+        traineeRepository.updateTrainee(trainee);
+    }
 }
