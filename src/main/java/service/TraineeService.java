@@ -25,6 +25,18 @@ public class TraineeService {
                 .orElseThrow(NoSuchTraineeException::new);
     }
 
+    public void activateTrainee(String username) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(username);
+        trainee.setIsActive(Boolean.TRUE);
+        updateTrainee(trainee);
+    }
+
+    public void deactivateTrainee(String username) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(username);
+        trainee.setIsActive(Boolean.FALSE);
+        updateTrainee(trainee);
+    }
+
     public void deleteTrainee(String username) {
         traineeRepository.deleteTrainee(username);
     }
