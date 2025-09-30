@@ -1,44 +1,31 @@
 package service;
 
-import dao.TraineeDAO;
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import repository.TraineeRepo;
 
 @Service
 @RequiredArgsConstructor
 public class TraineeService {
-    private final TraineeDAO traineeDAO;
+    private final TraineeRepo traineeRepository;
 
     public void createTrainee(Trainee trainee) {
-        traineeDAO.createTrainee(trainee);
+        traineeRepository.createTrainee(trainee);
     }
 
     public void updateTrainee(Trainee trainee) {
-        try {
-            traineeDAO.updateTrainee(trainee);
-        } catch (NoSuchTraineeException e) {
-            // we will inform the call about this
-            throw new RuntimeException(e);
-        }
+        traineeRepository.updateTrainee(trainee);
     }
 
-    public Trainee selectTrainee(long id) {
-        try {
-            return traineeDAO.selectTrainee(id);
-        } catch (NoSuchTraineeException e) {
-            // we will inform the call about this
-            throw new RuntimeException(e);
-        }
+    public Trainee selectTrainee(String username) throws NoSuchTraineeException {
+        return traineeRepository
+                .selectTrainee(username)
+                .orElseThrow(NoSuchTraineeException::new);
     }
 
-    public Trainee deleteTrainee(long id) {
-        try {
-            return traineeDAO.deleteTrainee(id);
-        } catch (NoSuchTraineeException e) {
-            // we will inform the call about this
-            throw new RuntimeException(e);
-        }
+    public void deleteTrainee(String username) {
+        traineeRepository.deleteTrainee(username);
     }
 }

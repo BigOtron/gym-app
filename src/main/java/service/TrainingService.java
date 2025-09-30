@@ -1,26 +1,25 @@
 package service;
 
-import dao.TrainingDAO;
 import entity.Training;
 import exceptions.NoSuchTrainingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import repository.TrainingRepo;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 public class TrainingService {
-    private final TrainingDAO trainingDAO;
+    private final TrainingRepo trainingRepository;
 
     public void createTraining(Training training) {
-        trainingDAO.createTraining(training);
+        trainingRepository.createTraining(training);
     }
 
-    public Training selectTraining(long id) {
-        try {
-            return trainingDAO.selectTraining(id);
-        } catch (NoSuchTrainingException e) {
-            // we will notify the caller
-            throw new RuntimeException(e);
-        }
+    public Training selectTraining(UUID id) throws NoSuchTrainingException {
+        return trainingRepository
+                .selectTraining(id)
+                .orElseThrow(NoSuchTrainingException::new);
     }
 }

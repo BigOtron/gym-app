@@ -1,35 +1,27 @@
 package service;
 
-import dao.TrainerDAO;
 import entity.Trainer;
 import exceptions.NoSuchTrainerException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import repository.TrainerRepo;
 
 @Service
 @RequiredArgsConstructor
 public class TrainerService {
-    private final TrainerDAO trainerDAO;
+    private final TrainerRepo trainerRepository;
 
     public void createTrainer(Trainer trainer) {
-        trainerDAO.createTrainer(trainer);
+        trainerRepository.createTrainer(trainer);
     }
 
     public void updateTrainer(Trainer trainer) {
-        try {
-            trainerDAO.updateTrainer(trainer);
-        } catch (NoSuchTrainerException e) {
-            // we will inform the caller about this
-            throw new RuntimeException(e);
-        }
+        trainerRepository.updateTrainer(trainer);
     }
 
-    public Trainer selectTrainer(long id) {
-        try {
-            return trainerDAO.selectTrainer(id);
-        } catch (NoSuchTrainerException e) {
-            // we will inform the caller about this
-            throw new RuntimeException(e);
-        }
+    public Trainer selectTrainer(String username) throws NoSuchTrainerException {
+        return trainerRepository
+                .selectTrainer(username)
+                .orElseThrow(NoSuchTrainerException::new);
     }
 }
