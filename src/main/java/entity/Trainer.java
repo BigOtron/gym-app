@@ -1,35 +1,32 @@
 package entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
 @NoArgsConstructor
+@Entity
 public class Trainer extends User{
-    private long userId;
-    private List<TrainingType> specialization;
+    @ManyToOne
+    @JoinColumn(name = "training_type_id", nullable = false)
+    private TrainingType specialization;
+
+
+    @OneToMany(mappedBy = "trainer")
+    private List<Training> trainings = new ArrayList<>();
 
     public Trainer(String firstName, String lastName, String username,
-                   String password, List<TrainingType> specialization) {
+                   String password, TrainingType specialization) {
         super(firstName, lastName, username, password);
         this.specialization = specialization;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Trainer trainer)) return false;
-        return Objects.equals(getFirstName(), trainer.getFirstName()) &&
-                Objects.equals(getLastName(), trainer.getLastName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getFirstName(), getLastName());
     }
 }
