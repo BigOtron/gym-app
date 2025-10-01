@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import repository.TraineeRepo;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -54,6 +56,18 @@ public class TraineeRepoImpl implements TraineeRepo {
                     .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Trainee> selectByUsernameContaining(String username) {
+        String query = "SELECT t FROM Trainee t WHERE t.username LIKE :username";
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(query, Trainee.class)
+                    .setParameter("username", "%" + username + "%")
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.emptyList();
         }
     }
 

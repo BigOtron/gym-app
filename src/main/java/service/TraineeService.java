@@ -5,6 +5,7 @@ import exceptions.NoSuchTraineeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import repository.TraineeRepo;
+import static utility.PasswordGenerator.generatePassword;
 
 @Service
 @RequiredArgsConstructor
@@ -12,6 +13,13 @@ public class TraineeService {
     private final TraineeRepo traineeRepository;
 
     public void createTrainee(Trainee trainee) {
+        trainee.setPasswordHash(generatePassword(10));
+        if (traineeRepository.selectTrainee(trainee.getUsername()).isEmpty()) {
+            trainee.setUsername(trainee.getFirstName() + "." + trainee.getLastName());
+        } else {
+            int size = traineeRepository.selectByUsernameContaining(trainee.getUsername()).size();
+            trainee.setUsername(size + trainee.getFirstName() + "." + trainee.getLastName());
+        }
         traineeRepository.createTrainee(trainee);
     }
 

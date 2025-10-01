@@ -8,12 +8,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import repository.TrainerRepo;
 
+import static utility.PasswordGenerator.generatePassword;
+
 @Service
 @RequiredArgsConstructor
 public class TrainerService {
     private final TrainerRepo trainerRepository;
 
     public void createTrainer(Trainer trainer) {
+        trainer.setPasswordHash(generatePassword(10));
+        if (trainerRepository.selectTrainer(trainer.getUsername()).isEmpty()) {
+            trainer.setUsername(trainer.getFirstName() + "." + trainer.getLastName());
+        } else {
+            int size = trainerRepository.selectByUsernameContaining(trainer.getUsername()).size();
+            trainer.setUsername(size + trainer.getFirstName() + "." + trainer.getLastName());
+        }
         trainerRepository.createTrainer(trainer);
     }
 

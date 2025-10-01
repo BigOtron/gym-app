@@ -1,5 +1,6 @@
 package repository.impl;
 
+import entity.Trainee;
 import entity.Trainer;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
@@ -8,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import repository.TrainerRepo;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -54,6 +57,18 @@ public class TrainerRepoImpl implements TrainerRepo {
                     .getSingleResult());
         } catch (NoResultException e) {
             return Optional.empty();
+        }
+    }
+
+    @Override
+    public List<Trainer> selectByUsernameContaining(String username) {
+        String query = "SELECT t FROM Trainer t WHERE t.username LIKE :username";
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(query, Trainer.class)
+                    .setParameter("username", "%" + username + "%")
+                    .getResultList();
+        } catch (NoResultException e) {
+            return Collections.emptyList();
         }
     }
 }
