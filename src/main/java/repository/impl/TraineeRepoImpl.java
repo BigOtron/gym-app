@@ -1,6 +1,8 @@
 package repository.impl;
 
 import entity.Trainee;
+import entity.Trainer;
+import entity.Training;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
@@ -67,6 +69,45 @@ public class TraineeRepoImpl implements TraineeRepo {
                     .setParameter("username", "%" + username + "%")
                     .getResultList();
         } catch (NoResultException e) {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Training> selectTrainingsByUsername(String username) {
+        try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(
+                    "SELECT t from Training t WHERE t.trainee.username = :username", Training.class
+            ).setParameter("username",username)
+                    .getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Training> selectTrainingsByTrainerFirstName(String firstName) {
+        try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(
+                            "SELECT t from Training t WHERE t.trainer.firstName = :firstName", Training.class
+                    ).setParameter("firstName",firstName)
+                    .getResultList();
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
+    @Override
+    public List<Trainer> selectTrainersNotAssignedByUsername(String username) {
+        try(EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery(
+                    "SELECT tr FROM Trainer tr " +
+                            "WHERE tr.id NOT IN (" +
+                            "   SELECT t.trainer.id FROM Training t WHERE t.trainee.username = :username" +
+                            ")", Trainer.class
+            ).setParameter("username", username)
+                    .getResultList();
+        } catch (Exception e) {
             return Collections.emptyList();
         }
     }
