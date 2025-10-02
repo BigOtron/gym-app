@@ -7,6 +7,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,15 +27,23 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank(message = "First name is required")
+    @Size(max = 50, message = "First name must be at most 50 characters")
     @Column(nullable = false)
     private String firstName;
 
+    @NotBlank(message = "Last name is required")
+    @Size(max = 50, message = "Last name must be at most 50 characters")
     @Column(nullable = false)
     private String lastName;
 
+    @NotBlank(message = "Username is required")
+    @Size(min = 4, max = 30, message = "Username must be between 4 and 30 characters")
     @Column(nullable = false, unique = true)
     private String username;
 
+    @NotBlank(message = "Password hash cannot be empty")
+    @Size(min = 10, max = 10)
     @Column(nullable = false)
     private String passwordHash;
 
