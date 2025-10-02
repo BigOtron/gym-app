@@ -4,6 +4,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
@@ -22,6 +23,7 @@ import java.util.List;
 public class Trainee extends User {
     @Past(message = "Date of birth must be in the past")
     @ValidDateOfBirth
+    @NotNull(message = "Date of birth is required")
     private Date dateOfBirth;
 
     @NotBlank(message = "Address is required")
@@ -31,9 +33,9 @@ public class Trainee extends User {
     @OneToMany(mappedBy = "trainee", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Training> trainings = new ArrayList<>();
 
-    public Trainee(String firstName, String lastName, String username, String password,
+    public Trainee(String firstName, String lastName,
                    Date dateOfBirth, String address) {
-        super(firstName, lastName, username, password);
+        super(firstName, lastName);
         this.dateOfBirth = dateOfBirth;
         this.address = address;
     }

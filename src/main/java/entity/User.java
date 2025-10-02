@@ -1,14 +1,7 @@
 package entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,6 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity // TODO - should i use @MappedSuperclass or follow the er diagram?
 @Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,11 +44,9 @@ public class User {
     @Column(nullable = false)
     private Boolean isActive = Boolean.TRUE;
 
-    public User(String firstName, String lastName, String username, String password) {
+    public User(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.username = username;
-        this.passwordHash = password;
     }
 
     @Override

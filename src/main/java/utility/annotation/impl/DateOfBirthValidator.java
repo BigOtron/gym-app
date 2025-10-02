@@ -10,12 +10,14 @@ import java.util.Date;
 public class DateOfBirthValidator implements ConstraintValidator<ValidDateOfBirth, Date> {
     @Override
     public boolean isValid(Date value, ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
         Date today = new Date();
-        if (!value.before(today)) return false;
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.YEAR, -150);
         Date limit = cal.getTime();
 
-        return value.after(limit);
+        return value.before(today) && value.after(limit);
     }
 }

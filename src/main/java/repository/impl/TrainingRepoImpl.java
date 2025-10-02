@@ -1,10 +1,8 @@
 package repository.impl;
 
-import entity.Trainer;
 import entity.Training;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.NoResultException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import repository.TrainingRepo;

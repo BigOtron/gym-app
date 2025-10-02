@@ -1,102 +1,151 @@
 package service;
 
-import dao.TraineeDAO;
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import repository.TraineeRepo;
 
-import static org.junit.jupiter.api.Assertions.assertSame;
+import java.util.Date;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class TraineeServiceTest {
 
-    private TraineeDAO traineeDAO;
+    private TraineeRepo traineeRepo;
     private TraineeService traineeService;
 
     @BeforeEach
-    void setUp() {
-        traineeDAO = mock(TraineeDAO.class);
-        traineeService = new TraineeService(traineeDAO);
+    void setup() {
+        traineeRepo = mock(TraineeRepo.class);
+        traineeService = new TraineeService(traineeRepo);
+    }
+
+    private Trainee buildTrainee(String username) {
+        Trainee trainee = new Trainee("John", "Doe",
+                new Date(System.currentTimeMillis() - 1000000000L), "Some Address");
+        trainee.setUsername(username);
+        trainee.setPasswordHash("1234567890");
+        return trainee;
+
     }
 
     @Test
-    void testCreateTrainee() {
-        Trainee trainee = new Trainee();
-        trainee.setUserId(1L);
+    void testNewUsername() {
+        Trainee trainee = buildTrainee("jdoe");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.empty());
 
         traineeService.createTrainee(trainee);
 
-        verify(traineeDAO, times(1)).createTrainee(trainee);
+
+        assertEquals("John.Doe", trainee.getUsername());
+        verify(traineeRepo).createTrainee(trainee);
     }
 
     @Test
-    void testSelectTrainee() throws NoSuchTraineeException {
-        Trainee trainee = new Trainee();
-        trainee.setUserId(2L);
-        when(traineeDAO.selectTrainee(2L)).thenReturn(trainee);
+    void testAlreadyUsernameBehaviour() {
+        Trainee trainee = buildTrainee("jdoe");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
+        when(traineeRepo.selectByUsernameContaining("jdoe")).thenReturn(
+                java.util.List.of(buildTrainee("jdoe"), buildTrainee("jdoe2"))
+        );
 
-        Trainee result = traineeService.selectTrainee(2L);
+        traineeService.createTrainee(trainee);
 
-        assertSame(trainee, result);
-        verify(traineeDAO, times(1)).selectTrainee(2L);
+        verify(traineeRepo).createTrainee(trainee);
     }
 
     @Test
-    void testSelectTrainee_notFound() throws NoSuchTraineeException {
-        when(traineeDAO.selectTrainee(99L)).thenThrow(new NoSuchTraineeException());
+    void testSelectTraineeFound() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
 
-        assertThrows(RuntimeException.class, () -> traineeService.selectTrainee(99L));
-        verify(traineeDAO, times(1)).selectTrainee(99L);
+        Trainee found = traineeService.selectTrainee("jdoe");
+        assertEquals("jdoe", found.getUsername());
     }
 
     @Test
-    void testUpdateTrainee() throws NoSuchTraineeException {
-        Trainee trainee = new Trainee();
-        trainee.setUserId(3L);
+    void testSelectTraineeNotFound() {
+        when(traineeRepo.selectTrainee("ghost")).thenReturn(Optional.empty());
 
-        doNothing().when(traineeDAO).updateTrainee(trainee);
-
-        traineeService.updateTrainee(trainee);
-
-        verify(traineeDAO, times(1)).updateTrainee(trainee);
+        assertThrows(NoSuchTraineeException.class,
+                () -> traineeService.selectTrainee("ghost"));
     }
 
     @Test
-    void testUpdateTrainee_notFound() throws NoSuchTraineeException {
-        Trainee trainee = new Trainee();
-        trainee.setUserId(99L);
+    void testActivateTrainee() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setIsActive(false);
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
 
-        doThrow(new NoSuchTraineeException()).when(traineeDAO).updateTrainee(trainee);
+        traineeService.activateTrainee("jdoe");
 
-        assertThrows(RuntimeException.class, () -> traineeService.updateTrainee(trainee));
-        verify(traineeDAO, times(1)).updateTrainee(trainee);
+        assertTrue(trainee.getIsActive());
+        verify(traineeRepo).updateTrainee(trainee);
     }
 
     @Test
-    void testDeleteTrainee() throws NoSuchTraineeException {
-        Trainee trainee = new Trainee();
-        trainee.setUserId(4L);
+    void testDeactivateTrainee() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setIsActive(true);
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
 
-        when(traineeDAO.deleteTrainee(4L)).thenReturn(trainee);
+        traineeService.deactivateTrainee("jdoe");
 
-        Trainee deleted = traineeService.deleteTrainee(4L);
-
-        assertSame(trainee, deleted);
-        verify(traineeDAO, times(1)).deleteTrainee(4L);
+        assertFalse(trainee.getIsActive());
+        verify(traineeRepo).updateTrainee(trainee);
     }
 
     @Test
-    void testDeleteTrainee_notFound() throws NoSuchTraineeException {
-        doThrow(new NoSuchTraineeException()).when(traineeDAO).deleteTrainee(99L);
+    void testDeleteTrainee() {
+        traineeService.deleteTrainee("jdoe");
+        verify(traineeRepo).deleteTrainee("jdoe");
+    }
 
-        assertThrows(RuntimeException.class, () -> traineeService.deleteTrainee(99L));
-        verify(traineeDAO, times(1)).deleteTrainee(99L);
+    @Test
+    void testValidateCredentialsSuccess() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setPasswordHash("secret");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
+
+        assertTrue(traineeService.validateTraineeCredentials("jdoe", "secret"));
+    }
+
+    @Test
+    void testValidateCredentialsFailure() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setPasswordHash("secret");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
+
+        assertFalse(traineeService.validateTraineeCredentials("jdoe", "wrongpass"));
+    }
+
+    @Test
+    void testChangePasswordSuccess() throws NoSuchTraineeException {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setPasswordHash("oldpass");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
+
+        traineeService.changePassword("jdoe", "oldpass", "newpass");
+
+        assertEquals("newpass", trainee.getPasswordHash());
+        verify(traineeRepo).updateTrainee(trainee);
+    }
+
+    @Test
+    void testChangePasswordWrongOldPassword() {
+        Trainee trainee = buildTrainee("jdoe");
+        trainee.setPasswordHash("oldpass");
+        when(traineeRepo.selectTrainee("jdoe")).thenReturn(Optional.of(trainee));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> traineeService.changePassword("jdoe", "wrong", "newpass"));
     }
 }

@@ -11,14 +11,6 @@ import service.TrainingService;
 @ComponentScan(basePackages = {"dao", "entity", "exceptions", "service", "storage", "utility"})
 public class Application {
     public static void main(String[] args) {
-        System.out.println("Hello");
-        AnnotationConfigApplicationContext context =
-                new AnnotationConfigApplicationContext(Application.class);
-        TrainerService service = context.getBean(TrainerService.class);
-        System.out.println(service.selectTrainer(1).getPassword());
-        TraineeService traineeService = context.getBean(TraineeService.class);
-        TrainingService trainingService = context.getBean(TrainingService.class);
-        System.out.println(traineeService.selectTrainee(1).getFirstName());
-        System.out.println(trainingService.selectTraining(1).getTrainingName());
+
     }
 }

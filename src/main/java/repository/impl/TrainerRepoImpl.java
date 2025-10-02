@@ -1,6 +1,5 @@
 package repository.impl;
 
-import entity.Trainee;
 import entity.Trainer;
 import entity.Training;
 import jakarta.persistence.EntityManager;

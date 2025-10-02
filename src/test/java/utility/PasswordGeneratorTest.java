@@ -1,5 +1,6 @@
 package utility;
 
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,36 +10,34 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PasswordGeneratorTest {
 
-    private final PasswordGenerator generator = new PasswordGenerator();
-
     @Test
-    void testPasswordLength() {
-        String password = generator.generatePassword(10);
+    void testLength() {
+        int length = 12;
+        String password = PasswordGenerator.generatePassword(length);
+
         assertNotNull(password);
-        assertEquals(10, password.length());
+        assertEquals(length, password.length());
     }
 
     @Test
-    void testPasswordUniqueness() {
-        String password1 = generator.generatePassword(10);
-        String password2 = generator.generatePassword(10);
-        assertNotEquals(password1, password2);
-    }
+    void testValidChars() {
+        int length = 20;
+        String password = PasswordGenerator.generatePassword(length);
 
-    @Test
-    void testPasswordCharacters() {
-        String password = generator.generatePassword(20);
-        String allowedChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+        String validChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+
         for (char c : password.toCharArray()) {
-            assertTrue(allowedChars.indexOf(c) >= 0, "Invalid character found: " + c);
+            assertTrue(validChars.indexOf(c) >= 0,
+                    "Invalid character found in password: " + c);
         }
     }
 
-    @Test
-    void testDifferentLengths() {
-        String shortPwd = generator.generatePassword(5);
-        String longPwd = generator.generatePassword(30);
-        assertEquals(5, shortPwd.length());
-        assertEquals(30, longPwd.length());
+    @RepeatedTest(5)
+    void testRandom() {
+        int length = 10;
+        String password1 = PasswordGenerator.generatePassword(length);
+        String password2 = PasswordGenerator.generatePassword(length);
+
+        assertNotEquals(password1, password2, "Passwords should not be equal in each calls");
     }
 }
