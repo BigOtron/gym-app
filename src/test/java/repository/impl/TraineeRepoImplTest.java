@@ -3,6 +3,10 @@ package repository.impl;
 
 import entity.Trainee;
 
+import entity.Trainer;
+import entity.Training;
+import entity.TrainingType;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.junit.jupiter.api.AfterAll;
@@ -15,17 +19,20 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TraineeRepoImplTest {
 
     private static EntityManagerFactory emf;
     private static TraineeRepoImpl traineeRepo;
+    private static TrainingRepoImpl trainingRepo;
 
     @BeforeAll
     static void init() {
         emf = Persistence.createEntityManagerFactory("gym-app");
         traineeRepo = new TraineeRepoImpl(emf);
+        trainingRepo = new TrainingRepoImpl(emf);
     }
 
     @AfterEach
@@ -55,6 +62,33 @@ class TraineeRepoImplTest {
         trainee.setUsername(username);
         trainee.setPasswordHash("1234567890");
         return trainee;
+    }
+
+    private Training buildTraining(String name, Trainee trainee) {
+        EntityManager em = emf.createEntityManager();
+        em.getTransaction().begin();
+
+        TrainingType trainingType = new TrainingType();
+        trainingType.setSpecialization("pull-up");
+        em.persist(trainingType);
+
+        Trainer trainer = new Trainer("ahmad", "ahmadov", trainingType);
+        trainer.setUsername("ahmad.ahmadov");
+        trainer.setPasswordHash("1234567890");
+        em.persist(trainer);
+
+        em.getTransaction().commit();
+        em.close();
+
+        Training training = new Training();
+        training.setTrainer(trainer);
+        training.setTrainee(trainee);
+        training.setTrainingName(name);
+        training.setTrainingType(trainingType);
+        training.setTrainingDate(new Date(System.currentTimeMillis() + 1000*60*60*24));
+        training.setDuration(60);
+        return training;
+
     }
 
     @Test
@@ -99,5 +133,34 @@ class TraineeRepoImplTest {
 
         Optional<Trainee> found = traineeRepo.selectTrainee("todelete");
         assertTrue(found.isEmpty());
+    }
+
+    @Test
+    void testSelectTrainingsByUsername() {
+        Trainee trainee = buildTrainee("azim.azimov");
+        traineeRepo.createTrainee(trainee);
+        Training training1 = buildTraining("training1", trainee);
+        trainingRepo.createTraining(training1);
+
+        List<Training> trainings = traineeRepo.selectTrainingsByUsername(trainee.getUsername());
+
+        assertFalse(trainings.isEmpty());
+        assertEquals(1, trainings.size());
+        assertEquals(trainings.get(0).getTrainee().getId(), trainee.getId());
+
+    }
+
+    @Test
+    void testSelectTrainingsByTraineeFirstName() {
+        Trainee trainee = buildTrainee("farrux.farruxov");
+
+        traineeRepo.createTrainee(trainee);
+        Training training1 = buildTraining("training1", trainee);
+        trainingRepo.createTraining(training1);
+
+        List<Training> trainings = traineeRepo.selectTrainingsByTrainerFirstName(training1.getTrainer().getFirstName());
+        assertFalse(trainings.isEmpty());
+        assertEquals(1, trainings.size());
+        assertEquals(trainings.get(0).getTrainee().getId(), trainee.getId());
     }
 }
