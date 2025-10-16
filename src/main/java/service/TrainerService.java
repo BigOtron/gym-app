@@ -1,11 +1,15 @@
 package service;
 
+import dto.request.TrainerRegRequest;
+import dto.response.RegResponse;
 import entity.Trainer;
+import entity.TrainingType;
 import exceptions.NoSuchTrainerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import repository.TrainerRepo;
+import repository.TrainingTypeRepo;
 
 import static utility.PasswordGenerator.generatePassword;
 
@@ -14,15 +18,21 @@ import static utility.PasswordGenerator.generatePassword;
 @Slf4j
 public class TrainerService {
     private final TrainerRepo trainerRepository;
+    private final TrainingTypeRepo trainingTypeRepo;
 
-    public void createTrainer(Trainer trainer) {
-        log.info("Creating trainer: {} {}", trainer.getFirstName(), trainer.getLastName());
+    public RegResponse createTrainer(TrainerRegRequest request) {
+        Trainer trainer = new Trainer();
+        TrainingType trainingType = new TrainingType();
+        trainingType.setSpecialization(request.getSpecialization());
+        trainingTypeRepo.createTrainingType(trainingType);
+        trainer.setFirstName(request.getFirstName());
+        trainer.setLastName(request.getLastName());
+        trainer.setSpecialization(trainingType);
         trainer.setPasswordHash(generatePassword(10));
+        trainer.setUsername(trainer.getFirstName() + "." + trainer.getLastName());
+        log.info("Creating trainer: {} {}", trainer.getFirstName(), trainer.getLastName());
 
-        if (trainerRepository.selectTrainer(trainer.getUsername()).isEmpty()) {
-            trainer.setUsername(trainer.getFirstName() + "." + trainer.getLastName());
-            log.debug("Generated username: {}", trainer.getUsername());
-        } else {
+        if (trainerRepository.selectTrainer(trainer.getUsername()).isPresent()) {
             int size = trainerRepository.selectByUsernameContaining(trainer.getUsername()).size();
             trainer.setUsername(size + trainer.getFirstName() + "." + trainer.getLastName());
             log.debug("Username already existed. New generated username: {}", trainer.getUsername());
@@ -30,6 +40,7 @@ public class TrainerService {
 
         trainerRepository.createTrainer(trainer);
         log.info("Trainer create with username: {}", trainer.getUsername());
+        return new RegResponse(trainer.getUsername(), trainer.getPasswordHash());
     }
 
     public void updateTrainer(Trainer trainer) {
