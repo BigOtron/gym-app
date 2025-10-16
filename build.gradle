@@ -25,6 +25,7 @@ ext {
     lombokVersion = '1.18.34'
     jakartaValidationVersion = '3.1.1'
     h2Version = '2.4.240'
+    springWebStarterVersion = '3.5.5'
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: jakartaValidationVersion
     testImplementation group: 'com.h2database', name: 'h2', version: h2Version
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springWebStarterVersion
 
     testImplementation group: 'org.springframework', name: 'spring-test', version: springTestVersion
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion

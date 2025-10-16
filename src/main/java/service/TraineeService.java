@@ -1,5 +1,7 @@
 package service;
 
+import dto.request.TraineeRegRequest;
+import dto.response.RegResponse;
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +16,17 @@ import static utility.PasswordGenerator.generatePassword;
 public class TraineeService {
     private final TraineeRepo traineeRepository;
 
-    public void createTrainee(Trainee trainee) {
+    public RegResponse createTrainee(TraineeRegRequest request) {
+        Trainee trainee = new Trainee();
+        trainee.setFirstName(request.getFirstName());
+        trainee.setLastName(request.getLastName());
+        trainee.setDateOfBirth(request.getDateOfBirth());
+        trainee.setAddress(request.getAddress()); // TODO: please, please, create a mapper later
         trainee.setPasswordHash(generatePassword(10));
+        trainee.setUsername(trainee.getFirstName() + "." + trainee.getLastName());
         log.info("Creating trainee with tentative username={}", trainee.getUsername());
 
-        if (traineeRepository.selectTrainee(trainee.getUsername()).isEmpty()) {
-            trainee.setUsername(trainee.getFirstName() + "." + trainee.getLastName());
-            log.debug("Assigned username={} for trainee", trainee.getUsername());
-        } else {
+        if (traineeRepository.selectTrainee(trainee.getUsername()).isPresent()) {
             int size = traineeRepository.selectByUsernameContaining(trainee.getUsername()).size();
             trainee.setUsername(size + trainee.getFirstName() + "." + trainee.getLastName());
             log.debug("Username exists, generated new username={}", trainee.getUsername());
@@ -29,6 +34,7 @@ public class TraineeService {
 
         traineeRepository.createTrainee(trainee);
         log.info("Trainee created successfully with username={}", trainee.getUsername());
+        return new RegResponse(trainee.getUsername(), trainee.getPasswordHash());
     }
 
     public void updateTrainee(Trainee trainee) {
