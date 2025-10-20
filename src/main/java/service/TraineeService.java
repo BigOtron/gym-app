@@ -1,11 +1,17 @@
 package service;
 
+import dto.request.LoginRequest;
 import dto.request.TraineeRegRequest;
+import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import entity.Trainee;
 import exceptions.NoSuchTraineeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repository.TraineeRepo;
 import static utility.PasswordGenerator.generatePassword;
@@ -15,6 +21,9 @@ import static utility.PasswordGenerator.generatePassword;
 @RequiredArgsConstructor
 public class TraineeService {
     private final TraineeRepo traineeRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public RegResponse createTrainee(TraineeRegRequest request) {
         Trainee trainee = new Trainee();
@@ -22,7 +31,8 @@ public class TraineeService {
         trainee.setLastName(request.getLastName());
         trainee.setDateOfBirth(request.getDateOfBirth());
         trainee.setAddress(request.getAddress()); // TODO: please, please, create a mapper later
-        trainee.setPasswordHash(generatePassword(10));
+        String password = generatePassword(10);
+        trainee.setPasswordHash(passwordEncoder.encode(password));
         trainee.setUsername(trainee.getFirstName() + "." + trainee.getLastName());
         log.info("Creating trainee with tentative username={}", trainee.getUsername());
 
@@ -34,7 +44,22 @@ public class TraineeService {
 
         traineeRepository.createTrainee(trainee);
         log.info("Trainee created successfully with username={}", trainee.getUsername());
-        return new RegResponse(trainee.getUsername(), trainee.getPasswordHash());
+        return new RegResponse(trainee.getUsername(), password);
+    }
+
+    public JwtAuthResponse authenticate(LoginRequest loginRequest) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        Trainee trainee =  traineeRepository.selectTrainee(loginRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String accessToken = jwtService.generateAccessToken(trainee);
+        return new JwtAuthResponse(accessToken, jwtService.getAccessTokenExpiration());
     }
 
     public void updateTrainee(Trainee trainee) {

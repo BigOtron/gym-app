@@ -26,6 +26,8 @@ ext {
     jakartaValidationVersion = '3.1.1'
     h2Version = '2.4.240'
     springWebStarterVersion = '3.5.5'
+    springSecurityStarerVersion = '3.4.10'
+    jwtVersion = '0.11.5'
 }
 
 dependencies {
@@ -41,6 +43,10 @@ dependencies {
     implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: jakartaValidationVersion
     testImplementation group: 'com.h2database', name: 'h2', version: h2Version
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-web', version: springWebStarterVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: springSecurityStarerVersion
+    implementation group: 'io.jsonwebtoken', name: 'jjwt-api', version: jwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-impl', version: jwtVersion
+    runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jwtVersion
 
     testImplementation group: 'org.springframework', name: 'spring-test', version: springTestVersion
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
