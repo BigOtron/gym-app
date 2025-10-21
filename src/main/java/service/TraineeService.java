@@ -8,6 +8,7 @@ import entity.Trainee;
 import exceptions.NoSuchTraineeException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mapper.TraineeMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -24,27 +25,16 @@ public class TraineeService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final TraineeMapper mapper;
 
     public RegResponse createTrainee(TraineeRegRequest request) {
-        Trainee trainee = new Trainee();
-        trainee.setFirstName(request.getFirstName());
-        trainee.setLastName(request.getLastName());
-        trainee.setDateOfBirth(request.getDateOfBirth());
-        trainee.setAddress(request.getAddress()); // TODO: please, please, create a mapper later
+        Trainee trainee = mapper.toEntity(request);
         String password = generatePassword(10);
         trainee.setPasswordHash(passwordEncoder.encode(password));
-        trainee.setUsername(trainee.getFirstName() + "." + trainee.getLastName());
-        log.info("Creating trainee with tentative username={}", trainee.getUsername());
-
-        if (traineeRepository.selectTrainee(trainee.getUsername()).isPresent()) {
-            int size = traineeRepository.selectByUsernameContaining(trainee.getUsername()).size();
-            trainee.setUsername(size + trainee.getFirstName() + "." + trainee.getLastName());
-            log.debug("Username exists, generated new username={}", trainee.getUsername());
-        }
-
+        trainee.setUsername(generateUniqueUsername(trainee.getFirstName(), trainee.getLastName()));
         traineeRepository.createTrainee(trainee);
         log.info("Trainee created successfully with username={}", trainee.getUsername());
-        return new RegResponse(trainee.getUsername(), password);
+        return mapper.toRegResponse(trainee.getUsername(), password);
     }
 
     public JwtAuthResponse authenticate(LoginRequest loginRequest) {
@@ -119,5 +109,17 @@ public class TraineeService {
         trainee.setPasswordHash(newPassword);
         traineeRepository.updateTrainee(trainee);
         log.info("Password changed successfully for trainee username={}", username);
+    }
+
+    private String generateUniqueUsername(String firstName, String lastName) {
+        String baseUsername = firstName + "." + lastName;
+        log.debug("Creating trainee with temporary username={}", baseUsername);
+        String newUsername = baseUsername;
+        int suffix = 1;
+        while (traineeRepository.selectTrainee(newUsername).isPresent()) {
+            newUsername = baseUsername + suffix++;
+            log.debug("Username exists, generated new username={}", newUsername);
+        }
+        return newUsername;
     }
 }
