@@ -1,13 +1,17 @@
 package controller.v1;
 
 import dto.request.ChangeLoginRequest;
+import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.response.TraineeProfileResponse;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import exceptions.NoSuchTraineeException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -38,6 +42,22 @@ public class TraineeController {
         try {
             traineeService.changePassword(request);
             return ResponseEntity.ok().build();
+        } catch (NoSuchTraineeException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<TraineeProfileResponse> getProfile(@RequestBody GetProfileRequest request,
+                                                             HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            TraineeProfileResponse profile = traineeService.getTraineeProfile(request);
+            return ResponseEntity.ok(profile);
         } catch (NoSuchTraineeException e) {
             return ResponseEntity.notFound().build();
         }

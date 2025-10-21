@@ -1,12 +1,16 @@
 package service;
 
 import dto.request.ChangeLoginRequest;
+import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
+import dto.response.TraineeProfileResponse;
 import entity.Trainee;
+import entity.Training;
 import exceptions.NoSuchTraineeException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.TraineeMapper;
@@ -16,6 +20,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repository.TraineeRepo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static utility.PasswordGenerator.generatePassword;
 
 @Slf4j
@@ -112,6 +120,17 @@ public class TraineeService {
         log.info("Password changed successfully for trainee username={}", request.getUsername());
     }
 
+    public boolean isUsernameSame(HttpServletRequest request, String username) {
+        return jwtService.extractUsername(getToken(request)).equals(username);
+    }
+
+    public TraineeProfileResponse getTraineeProfile(GetProfileRequest request) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(request.getUsername());
+        TraineeProfileResponse response = mapper.toProfile(trainee);
+        response.setTrainerProfiles(getTrainerProfile(trainee.getUsername()));
+        return response;
+    }
+
     private String generateUniqueUsername(String firstName, String lastName) {
         String baseUsername = firstName + "." + lastName;
         log.debug("Creating trainee with temporary username={}", baseUsername);
@@ -122,5 +141,23 @@ public class TraineeService {
             log.debug("Username exists, generated new username={}", newUsername);
         }
         return newUsername;
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return "No token found";
+    }
+
+    private List<TraineeProfileResponse.TrainerProfile> getTrainerProfile(String username) {
+        List<Training> trainings = traineeRepository.selectTrainingsByUsername(username);
+        List<TraineeProfileResponse.TrainerProfile> profiles = new ArrayList<>();
+        for (Training t : trainings) {
+            profiles.add(mapper.toTrainerProfile(t.getTrainer()));
+        }
+
+        return profiles;
     }
 }
