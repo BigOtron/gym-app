@@ -1,12 +1,19 @@
 package service;
 
+import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
+import entity.Trainee;
 import entity.Trainer;
 import entity.TrainingType;
 import exceptions.NoSuchTrainerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repository.TrainerRepo;
 import repository.TrainingTypeRepo;
@@ -19,6 +26,9 @@ import static utility.PasswordGenerator.generatePassword;
 public class TrainerService {
     private final TrainerRepo trainerRepository;
     private final TrainingTypeRepo trainingTypeRepo;
+    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     public RegResponse createTrainer(TrainerRegRequest request) {
         Trainer trainer = new Trainer();
@@ -28,7 +38,8 @@ public class TrainerService {
         trainer.setFirstName(request.getFirstName());
         trainer.setLastName(request.getLastName());
         trainer.setSpecialization(trainingType);
-        trainer.setPasswordHash(generatePassword(10));
+        String password = generatePassword(10);
+        trainer.setPasswordHash(passwordEncoder.encode(password));
         trainer.setUsername(trainer.getFirstName() + "." + trainer.getLastName());
         log.info("Creating trainer: {} {}", trainer.getFirstName(), trainer.getLastName());
 
@@ -40,7 +51,23 @@ public class TrainerService {
 
         trainerRepository.createTrainer(trainer);
         log.info("Trainer create with username: {}", trainer.getUsername());
-        return new RegResponse(trainer.getUsername(), trainer.getPasswordHash());
+        return new RegResponse(trainer.getUsername(), password);
+    }
+
+    public JwtAuthResponse authenticate(LoginRequest loginRequest) {
+        log.info("Authenticating user {}", loginRequest.getUsername());
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequest.getUsername(),
+                        loginRequest.getPassword()
+                )
+        );
+
+        Trainer trainer =  trainerRepository.selectTrainer(loginRequest.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("Trainer user not found"));
+
+        String accessToken = jwtService.generateAccessToken(trainer);
+        return new JwtAuthResponse(accessToken, jwtService.getAccessTokenExpiration());
     }
 
     public void updateTrainer(Trainer trainer) {

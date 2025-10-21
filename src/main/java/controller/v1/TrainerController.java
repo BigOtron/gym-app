@@ -1,6 +1,8 @@
 package controller.v1;
 
+import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +23,12 @@ public class TrainerController {
     @PostMapping("/register")
     public ResponseEntity<RegResponse> register(@RequestBody TrainerRegRequest trainerRegRequest) {
         RegResponse response = trainerService.createTrainer(trainerRegRequest);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+        JwtAuthResponse response = trainerService.authenticate(request);
         return ResponseEntity.ok(response);
     }
 }

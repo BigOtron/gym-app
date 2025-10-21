@@ -1,28 +1,32 @@
 package configuration;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import repository.TraineeRepo;
+import repository.TrainerRepo;
 
 @Configuration
+@AllArgsConstructor
 public class AppConfig {
     private final TraineeRepo traineeRepo;
-
-    public AppConfig(TraineeRepo traineeRepo) {
-        this.traineeRepo = traineeRepo;
-    }
+    private final TrainerRepo trainerRepo;
 
     @Bean
     UserDetailsService userDetailsService() {
         return username -> traineeRepo.selectTrainee(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .<UserDetails>map(user -> user)
+                .or(() -> trainerRepo.selectTrainer(username)
+                        .<UserDetails>map(user -> user))
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
 
     @Bean
