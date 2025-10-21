@@ -4,12 +4,11 @@ import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
-import entity.Trainee;
 import entity.Trainer;
-import entity.TrainingType;
 import exceptions.NoSuchTrainerException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mapper.TrainerMapper;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,29 +28,17 @@ public class TrainerService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
+    private final TrainerMapper trainerMapper;
 
     public RegResponse createTrainer(TrainerRegRequest request) {
-        Trainer trainer = new Trainer();
-        TrainingType trainingType = new TrainingType();
-        trainingType.setSpecialization(request.getSpecialization());
-        trainingTypeRepo.createTrainingType(trainingType);
-        trainer.setFirstName(request.getFirstName());
-        trainer.setLastName(request.getLastName());
-        trainer.setSpecialization(trainingType);
+        Trainer trainer = trainerMapper.toEntity(request);
+        trainingTypeRepo.createTrainingType(trainer.getSpecialization());
         String password = generatePassword(10);
         trainer.setPasswordHash(passwordEncoder.encode(password));
-        trainer.setUsername(trainer.getFirstName() + "." + trainer.getLastName());
-        log.info("Creating trainer: {} {}", trainer.getFirstName(), trainer.getLastName());
-
-        if (trainerRepository.selectTrainer(trainer.getUsername()).isPresent()) {
-            int size = trainerRepository.selectByUsernameContaining(trainer.getUsername()).size();
-            trainer.setUsername(size + trainer.getFirstName() + "." + trainer.getLastName());
-            log.debug("Username already existed. New generated username: {}", trainer.getUsername());
-        }
-
+        trainer.setUsername(generateUniqueUsername(trainer.getFirstName(), trainer.getLastName()));
         trainerRepository.createTrainer(trainer);
         log.info("Trainer create with username: {}", trainer.getUsername());
-        return new RegResponse(trainer.getUsername(), password);
+        return trainerMapper.toRegResponse(trainer.getUsername(), password);
     }
 
     public JwtAuthResponse authenticate(LoginRequest loginRequest) {
@@ -122,5 +109,17 @@ public class TrainerService {
         trainer.setPasswordHash(newPassword);
         trainerRepository.updateTrainer(trainer);
         log.info("Password changed successfully for trainer: {}", username);
+    }
+
+    private String generateUniqueUsername(String firstName, String lastName) {
+        String baseUsername = firstName + "." + lastName;
+        log.debug("Creating trainer with temporary username={}", baseUsername);
+        String newUsername = baseUsername;
+        int suffix = 1;
+        while (trainerRepository.selectTrainer(newUsername).isPresent()) {
+            newUsername = baseUsername + suffix++;
+            log.debug("Username exists, generated new username={}", newUsername);
+        }
+        return newUsername;
     }
 }
