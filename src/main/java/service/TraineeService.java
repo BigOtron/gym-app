@@ -1,5 +1,6 @@
 package service;
 
+import dto.request.ChangeLoginRequest;
 import dto.request.LoginRequest;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
@@ -92,23 +93,23 @@ public class TraineeService {
     public boolean validateTraineeCredentials(String username, String password) throws NoSuchTraineeException {
         log.debug("Validating credentials for trainee username={}", username);
         Trainee trainee = selectTrainee(username);
-        boolean isValid = trainee.getPasswordHash().equals(password);
+        boolean isValid = passwordEncoder.matches(password, trainee.getPasswordHash());
         log.info("Credentials validation for username={} result={}", username, isValid);
         return isValid;
     }
 
-    public void changePassword(String username, String oldPassword, String newPassword) throws NoSuchTraineeException {
-        log.info("Changing password for trainee username={}", username);
-        Trainee trainee = selectTrainee(username);
+    public void changePassword(ChangeLoginRequest request) throws NoSuchTraineeException {
+        log.info("Changing password for trainee username={}", request.getUsername());
+        Trainee trainee = selectTrainee(request.getUsername());
 
-        if (!trainee.getPasswordHash().equals(oldPassword)) {
-            log.warn("Password change failed: incorrect old password for username={}", username);
+        if (!validateTraineeCredentials(request.getUsername(), request.getOldPassword())) {
+            log.debug("Password change failed: incorrect old password for username={}", request.getUsername());
             throw new IllegalArgumentException("Old password is incorrect");
         }
 
-        trainee.setPasswordHash(newPassword);
+        trainee.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         traineeRepository.updateTrainee(trainee);
-        log.info("Password changed successfully for trainee username={}", username);
+        log.info("Password changed successfully for trainee username={}", request.getUsername());
     }
 
     private String generateUniqueUsername(String firstName, String lastName) {
