@@ -1,6 +1,7 @@
 package controller.v1;
 
 import dto.request.ChangeLoginRequest;
+import dto.request.DeleteTraineeRequest;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.UpdateTraineeProfileRequest;
@@ -11,7 +12,9 @@ import dto.response.RegResponse;
 import exceptions.NoSuchTraineeException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -78,5 +81,17 @@ public class TraineeController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteProfile(@RequestBody DeleteTraineeRequest request,
+                                              HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        traineeService.deleteTrainee(request.getUsername());
+        return ResponseEntity.ok().build();
+
     }
 }
