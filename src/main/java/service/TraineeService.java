@@ -4,6 +4,7 @@ import dto.request.ChangeLoginRequest;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TraineeRegRequest;
+import dto.request.UpdateTraineeProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
@@ -64,6 +65,12 @@ public class TraineeService {
     public void updateTrainee(Trainee trainee) {
         log.info("Updating trainee username={}", trainee.getUsername());
         traineeRepository.updateTrainee(trainee);
+    }
+
+    public TraineeProfileResponse updateTraineeProfile(UpdateTraineeProfileRequest request) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(request.getUsername());
+        updateTrainee(mapper.toUpdatedEntity(request, trainee));
+        return mapper.toProfile(trainee);
     }
 
     public Trainee selectTrainee(String username) throws NoSuchTraineeException {

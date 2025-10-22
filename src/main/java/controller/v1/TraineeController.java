@@ -3,6 +3,7 @@ package controller.v1;
 import dto.request.ChangeLoginRequest;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.request.UpdateTraineeProfileRequest;
 import dto.response.TraineeProfileResponse;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
@@ -61,5 +62,21 @@ public class TraineeController {
         } catch (NoSuchTraineeException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<TraineeProfileResponse> updateProfile(@RequestBody UpdateTraineeProfileRequest request,
+                                                                HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        TraineeProfileResponse response = null;
+        try {
+            response = traineeService.updateTraineeProfile(request);
+        } catch (NoSuchTraineeException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(response);
     }
 }
