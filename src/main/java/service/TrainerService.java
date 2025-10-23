@@ -1,11 +1,17 @@
 package service;
 
+import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
+import dto.response.TraineeProfileResponse;
+import dto.response.TrainerProfileResponse;
+import entity.Trainee;
 import entity.Trainer;
+import entity.Training;
 import exceptions.NoSuchTrainerException;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mapper.TrainerMapper;
@@ -16,6 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import repository.TrainerRepo;
 import repository.TrainingTypeRepo;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static utility.PasswordGenerator.generatePassword;
 
@@ -121,5 +130,33 @@ public class TrainerService {
             log.debug("Username exists, generated new username={}", newUsername);
         }
         return newUsername;
+    }
+
+    public TrainerProfileResponse getTrainerProfile(GetProfileRequest request) throws NoSuchTrainerException {
+        Trainer trainer = selectTrainer(request.getUsername());
+        TrainerProfileResponse response = trainerMapper.toProfile(trainer);
+        response.setTraineeProfiles(getTraineeProfiles(trainer.getUsername()));
+        return response;
+    }
+
+    public boolean isUsernameSame(HttpServletRequest request, String username) {
+        return jwtService.extractUsername(getToken(request)).equals(username);
+    }
+
+    private String getToken(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return "No token found";
+    }
+
+    private List<TrainerProfileResponse.TraineeProfile> getTraineeProfiles(String username) {
+        List<Training> trainings = trainerRepository.selectTrainingsByUsername(username);
+        List<TrainerProfileResponse.TraineeProfile> profiles = new ArrayList<>();
+        for (Training t : trainings) {
+            profiles.add(trainerMapper.toTraineeProfile(t.getTrainee()));
+        }
+        return profiles;
     }
 }

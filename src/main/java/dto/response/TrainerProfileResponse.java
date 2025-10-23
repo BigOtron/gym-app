@@ -1,25 +1,24 @@
 package dto.response;
 
+import entity.TrainingType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Data
+@AllArgsConstructor
 @NoArgsConstructor
-public class TraineeProfileResponse {
+public class TrainerProfileResponse {
     private String firstName;
     private String lastName;
-    private String dateOfBirth;
-    private String address;
+    private String spec;
     private boolean isActive;
-    private List<TrainerProfile> trainerProfiles;
-    public record TrainerProfile(
+    private List<TraineeProfile> traineeProfiles;
+    public record TraineeProfile(
             String username,
             String firstName,
-            String lastName,
-            String spec
-    ) {}
+            String lastName
+    ){}
 }
