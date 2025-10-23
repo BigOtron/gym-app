@@ -3,11 +3,10 @@ package service;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.request.UpdateTrainerProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
-import dto.response.TraineeProfileResponse;
 import dto.response.TrainerProfileResponse;
-import entity.Trainee;
 import entity.Trainer;
 import entity.Training;
 import exceptions.NoSuchTrainerException;
@@ -158,5 +157,11 @@ public class TrainerService {
             profiles.add(trainerMapper.toTraineeProfile(t.getTrainee()));
         }
         return profiles;
+    }
+
+    public TrainerProfileResponse updateTrainerProfile(UpdateTrainerProfileRequest request) throws NoSuchTrainerException {
+        Trainer trainer = selectTrainer(request.getUsername());
+        updateTrainer(trainerMapper.toUpdatedEntity(request, trainer));
+        return trainerMapper.toProfile(trainer);
     }
 }

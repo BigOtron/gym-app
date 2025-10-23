@@ -1,6 +1,7 @@
 package mapper;
 
 import dto.request.TrainerRegRequest;
+import dto.request.UpdateTrainerProfileRequest;
 import dto.response.RegResponse;
 import dto.response.TrainerProfileResponse;
 import entity.Trainee;
@@ -40,5 +41,12 @@ public class TrainerMapper {
                 trainee.getFirstName(),
                 trainee.getLastName()
         );
+    }
+
+    public Trainer toUpdatedEntity(UpdateTrainerProfileRequest request, Trainer trainer) {
+        trainer.setFirstName(request.getFirstName());
+        trainer.setLastName(request.getLastName());
+        trainer.setIsActive(request.isActive());
+        return trainer;
     }
 }

@@ -3,6 +3,8 @@ package controller.v1;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.request.UpdateTraineeProfileRequest;
+import dto.request.UpdateTrainerProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
@@ -13,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,5 +56,21 @@ public class TrainerController {
         } catch (NoSuchTrainerException e) {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @PutMapping("/update-profile")
+    public ResponseEntity<TrainerProfileResponse> updateProfile(@RequestBody UpdateTrainerProfileRequest request,
+                                                                HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        TrainerProfileResponse response = null;
+        try {
+            response = trainerService.updateTrainerProfile(request);
+        } catch (NoSuchTrainerException e) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(response);
     }
 }
