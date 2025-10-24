@@ -3,12 +3,16 @@ package controller.v1;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.request.TrainerTrainingsRequest;
 import dto.request.UpdateTraineeProfileRequest;
 import dto.request.UpdateTrainerProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
+import dto.response.TraineeTrainingsRequest;
+import dto.response.TraineeTrainingsResponse;
 import dto.response.TrainerProfileResponse;
+import dto.response.TrainerTrainingsResponse;
 import exceptions.NoSuchTraineeException;
 import exceptions.NoSuchTrainerException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import service.TrainerService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/trainers", consumes = "application/json", produces = "application/json")
@@ -72,5 +78,16 @@ public class TrainerController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/trainings")
+    public ResponseEntity<List<TrainerTrainingsResponse>> getTrainerTrainings(@RequestBody TrainerTrainingsRequest request,
+                                                                              HttpServletRequest httpRequest) {
+         // check if username and token username match
+        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<TrainerTrainingsResponse> trainingsResponses = trainerService.getTrainerTrainings(request);
+        return ResponseEntity.ok(trainingsResponses);
     }
 }

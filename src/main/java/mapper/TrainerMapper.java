@@ -1,11 +1,14 @@
 package mapper;
 
 import dto.request.TrainerRegRequest;
+import dto.request.TrainerTrainingsRequest;
 import dto.request.UpdateTrainerProfileRequest;
 import dto.response.RegResponse;
 import dto.response.TrainerProfileResponse;
+import dto.response.TrainerTrainingsResponse;
 import entity.Trainee;
 import entity.Trainer;
+import entity.Training;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -48,5 +51,16 @@ public class TrainerMapper {
         trainer.setLastName(request.getLastName());
         trainer.setIsActive(request.isActive());
         return trainer;
+    }
+
+    public TrainerTrainingsResponse toTrainings(Training t) {
+        TrainerTrainingsResponse response = new TrainerTrainingsResponse();
+        response.setTrainingName(t.getTrainingName());
+        response.setTrainingDate(t.getTrainingDate());
+        response.setTrainingType(t.getTrainingType().getSpecialization());
+        response.setDuration(t.getDuration());
+        response.setTraineeName(t.getTrainee().getFirstName());
+
+        return response;
     }
 }

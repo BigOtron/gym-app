@@ -3,10 +3,14 @@ package service;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
 import dto.request.TrainerRegRequest;
+import dto.request.TrainerTrainingsRequest;
 import dto.request.UpdateTrainerProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
+import dto.response.TraineeTrainingsRequest;
+import dto.response.TraineeTrainingsResponse;
 import dto.response.TrainerProfileResponse;
+import dto.response.TrainerTrainingsResponse;
 import entity.Trainer;
 import entity.Training;
 import exceptions.NoSuchTrainerException;
@@ -163,5 +167,15 @@ public class TrainerService {
         Trainer trainer = selectTrainer(request.getUsername());
         updateTrainer(trainerMapper.toUpdatedEntity(request, trainer));
         return trainerMapper.toProfile(trainer);
+    }
+
+    public List<TrainerTrainingsResponse> getTrainerTrainings(TrainerTrainingsRequest request) {
+        List<Training> trainings = trainerRepository.selectTrainingsByUsername(request.getUsername());
+        List<TrainerTrainingsResponse> responseList = new ArrayList<>();
+        for (Training t : trainings) {
+            responseList.add(trainerMapper.toTrainings(t));
+        }
+
+        return responseList;
     }
 }

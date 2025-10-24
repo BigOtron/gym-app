@@ -110,7 +110,7 @@ public class TraineeController {
         return ResponseEntity.ok(trainerProfiles);
     }
 
-    @GetMapping("/get-trainings")
+    @GetMapping("/trainings")
     public ResponseEntity<List<TraineeTrainingsResponse>> getTraineeTrainings(@RequestBody TraineeTrainingsRequest request,
                                                                         HttpServletRequest httpRequest) {
         // check if username and token username match
