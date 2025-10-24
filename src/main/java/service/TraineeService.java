@@ -8,6 +8,8 @@ import dto.request.UpdateTraineeProfileRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
+import dto.response.TraineeTrainingsRequest;
+import dto.response.TraineeTrainingsResponse;
 import entity.Trainee;
 import entity.Trainer;
 import entity.Training;
@@ -176,5 +178,15 @@ public class TraineeService {
             trainerProfiles.add(mapper.toTrainerProfile(t));
         }
         return trainerProfiles;
+    }
+
+    public List<TraineeTrainingsResponse> getTraineeTrainings(TraineeTrainingsRequest request) {
+        List<Training> trainings = traineeRepository.selectTrainingsByUsername(request.getUsername());
+        List<TraineeTrainingsResponse> responseList = new ArrayList<>();
+        for (Training t : trainings) {
+            responseList.add(mapper.toTraining(t));
+        }
+
+        return responseList;
     }
 }

@@ -9,7 +9,9 @@ import dto.response.TraineeProfileResponse;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
-import dto.response.TrainerProfileResponse;
+
+import dto.response.TraineeTrainingsRequest;
+import dto.response.TraineeTrainingsResponse;
 import exceptions.NoSuchTraineeException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -106,5 +108,16 @@ public class TraineeController {
         }
         List<TraineeProfileResponse.TrainerProfile> trainerProfiles = traineeService.getNotAssignedTrainers(request.getUsername());
         return ResponseEntity.ok(trainerProfiles);
+    }
+
+    @GetMapping("/get-trainings")
+    public ResponseEntity<List<TraineeTrainingsResponse>> getTraineeTrainings(@RequestBody TraineeTrainingsRequest request,
+                                                                        HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<TraineeTrainingsResponse> trainingsResponse = traineeService.getTraineeTrainings(request);
+        return ResponseEntity.ok(trainingsResponse);
     }
 }

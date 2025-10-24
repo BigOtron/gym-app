@@ -4,8 +4,10 @@ import dto.request.TraineeRegRequest;
 import dto.request.UpdateTraineeProfileRequest;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
+import dto.response.TraineeTrainingsResponse;
 import entity.Trainee;
 import entity.Trainer;
+import entity.Training;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -50,5 +52,15 @@ public class TraineeMapper {
         trainee.setIsActive(request.isActive());
 
         return trainee;
+    }
+
+    public TraineeTrainingsResponse toTraining(Training training) {
+        TraineeTrainingsResponse response = new TraineeTrainingsResponse();
+        response.setTrainingName(training.getTrainingName());
+        response.setTrainingType(training.getTrainingType().getSpecialization());
+        response.setTrainingDate(training.getTrainingDate());
+        response.setTrainingDuration(training.getDuration());
+        response.setTrainerName(training.getTrainer().getFirstName());
+        return response;
     }
 }
