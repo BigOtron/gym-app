@@ -9,6 +9,7 @@ import dto.response.TraineeProfileResponse;
 import dto.request.TraineeRegRequest;
 import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
+import dto.response.TrainerProfileResponse;
 import exceptions.NoSuchTraineeException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import service.TraineeService;
+
+import java.util.List;
 
 @RestController
 @AllArgsConstructor
@@ -92,5 +95,16 @@ public class TraineeController {
         traineeService.deleteTrainee(request.getUsername());
         return ResponseEntity.ok().build();
 
+    }
+
+    @GetMapping("/not-assigned-trainers")
+    public ResponseEntity<List<TraineeProfileResponse.TrainerProfile>> getNotAssignedTrainers(@RequestBody GetProfileRequest request,
+                                                                                        HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<TraineeProfileResponse.TrainerProfile> trainerProfiles = traineeService.getNotAssignedTrainers(request.getUsername());
+        return ResponseEntity.ok(trainerProfiles);
     }
 }

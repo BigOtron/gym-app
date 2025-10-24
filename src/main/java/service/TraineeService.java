@@ -9,6 +9,7 @@ import dto.response.JwtAuthResponse;
 import dto.response.RegResponse;
 import dto.response.TraineeProfileResponse;
 import entity.Trainee;
+import entity.Trainer;
 import entity.Training;
 import exceptions.NoSuchTraineeException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -166,5 +167,14 @@ public class TraineeService {
         }
 
         return profiles;
+    }
+
+    public List<TraineeProfileResponse.TrainerProfile> getNotAssignedTrainers(String username) {
+        List<Trainer> trainers = traineeRepository.selectTrainersNotAssignedByUsername(username);
+        List<TraineeProfileResponse.TrainerProfile> trainerProfiles = new ArrayList<>();
+        for (Trainer t : trainers) {
+            trainerProfiles.add(mapper.toTrainerProfile(t));
+        }
+        return trainerProfiles;
     }
 }
