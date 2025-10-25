@@ -3,6 +3,7 @@ package service;
 import dto.request.ChangeLoginRequest;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.request.SetStatusRequest;
 import dto.request.TraineeRegRequest;
 import dto.request.UpdateTraineeProfileRequest;
 import dto.response.JwtAuthResponse;
@@ -188,5 +189,11 @@ public class TraineeService {
         }
 
         return responseList;
+    }
+
+    public void changeStatus(SetStatusRequest request) throws NoSuchTraineeException {
+        Trainee trainee = selectTrainee(request.getUsername());
+        trainee.setIsActive(request.isActive());
+        traineeRepository.updateTrainee(trainee);
     }
 }

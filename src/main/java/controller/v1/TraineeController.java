@@ -4,6 +4,7 @@ import dto.request.ChangeLoginRequest;
 import dto.request.DeleteTraineeRequest;
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.request.SetStatusRequest;
 import dto.request.UpdateTraineeProfileRequest;
 import dto.response.TraineeProfileResponse;
 import dto.request.TraineeRegRequest;
@@ -18,6 +19,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -119,5 +121,21 @@ public class TraineeController {
         }
         List<TraineeTrainingsResponse> trainingsResponse = traineeService.getTraineeTrainings(request);
         return ResponseEntity.ok(trainingsResponse);
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
+                                          HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        try {
+            traineeService.changeStatus(request);
+        } catch (NoSuchTraineeException e) {
+            ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
