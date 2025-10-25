@@ -14,6 +14,7 @@ import dto.response.RegResponse;
 import dto.response.TraineeTrainingsRequest;
 import dto.response.TraineeTrainingsResponse;
 import exceptions.NoSuchTraineeException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +35,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api/v1/trainees", consumes = "application/json", produces = "application/json")
+@Tag(name = "Trainees", description = "Operations related to trainee accounts and profiles")
 public class TraineeController {
     private final TraineeService traineeService;
 

@@ -1,6 +1,7 @@
 package controller.v1;
 
 import dto.response.TrainingTypeResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/training-type", produces = "application/json")
 @RequiredArgsConstructor
+@Tag(name = "TrainingType", description = "Operations related to training type management")
 public class TrainingTypeController {
     private final TrainingTypeService trainingTypeService;
 

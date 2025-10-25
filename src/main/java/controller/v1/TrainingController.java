@@ -3,6 +3,7 @@ package controller.v1;
 import dto.request.CreateTrainingRequest;
 import exceptions.NoSuchTraineeException;
 import exceptions.NoSuchTrainerException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,7 @@ import service.TrainingService;
 @RequiredArgsConstructor
 @RestController
 @Slf4j
+@Tag(name = "Training", description = "Operations related to trainings management")
 public class TrainingController {
     private final TrainingService trainingService;
     private final TraineeService traineeService;

@@ -11,6 +11,7 @@ import dto.response.RegResponse;
 import dto.response.TrainerProfileResponse;
 import dto.response.TrainerTrainingsResponse;
 import exceptions.NoSuchTrainerException;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainers", consumes = "application/json", produces = "application/json")
+@Tag(name = "Trainers", description = "Operations related to trainer accounts and profiles")
 public class TrainerController {
     private final TrainerService trainerService;
 
