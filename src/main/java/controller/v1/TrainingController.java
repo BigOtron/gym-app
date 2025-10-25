@@ -5,6 +5,7 @@ import exceptions.NoSuchTraineeException;
 import exceptions.NoSuchTrainerException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class TrainingController {
     private final TraineeService traineeService;
 
     @PostMapping("/create")
-    public ResponseEntity<Void> createTraining(@RequestBody CreateTrainingRequest request,
+    public ResponseEntity<Void> createTraining(@Valid @RequestBody CreateTrainingRequest request,
                                                HttpServletRequest httpRequest) {
         log.info("Creating training: trainee={}, trainer={}, training name={}",
                 request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());

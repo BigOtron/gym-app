@@ -13,6 +13,7 @@ import dto.response.TrainerTrainingsResponse;
 import exceptions.NoSuchTrainerException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +37,7 @@ public class TrainerController {
     private final TrainerService trainerService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegResponse> register(@RequestBody TrainerRegRequest trainerRegRequest) {
+    public ResponseEntity<RegResponse> register(@Valid @RequestBody TrainerRegRequest trainerRegRequest) {
         log.info("Received trainer registration request for name: {}", trainerRegRequest.getFirstName());
         RegResponse response = trainerService.createTrainer(trainerRegRequest);
         log.info("Trainer registered successfully: {}", response.getUsername());
@@ -44,7 +45,7 @@ public class TrainerController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginRequest request) {
         log.info("Trainer login attempt for username: {}", request.getUsername());
         JwtAuthResponse response = trainerService.authenticate(request);
         log.info("Trainer login successful for username: {}", request.getUsername());
@@ -52,7 +53,7 @@ public class TrainerController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<TrainerProfileResponse> getProfile(@RequestBody GetProfileRequest request,
+    public ResponseEntity<TrainerProfileResponse> getProfile(@Valid @RequestBody GetProfileRequest request,
                                                              HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Profile request for trainer username: {}", username);
@@ -73,7 +74,7 @@ public class TrainerController {
     }
 
     @PutMapping("/update-profile")
-    public ResponseEntity<TrainerProfileResponse> updateProfile(@RequestBody UpdateTrainerProfileRequest request,
+    public ResponseEntity<TrainerProfileResponse> updateProfile(@Valid @RequestBody UpdateTrainerProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Update trainer profile request for username: {}", username);
@@ -94,7 +95,7 @@ public class TrainerController {
     }
 
     @GetMapping("/trainings")
-    public ResponseEntity<List<TrainerTrainingsResponse>> getTrainerTrainings(@RequestBody TrainerTrainingsRequest request,
+    public ResponseEntity<List<TrainerTrainingsResponse>> getTrainerTrainings(@Valid @RequestBody TrainerTrainingsRequest request,
                                                                               HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Fetching trainings for trainer username: {}", username);
@@ -110,7 +111,7 @@ public class TrainerController {
     }
 
     @PatchMapping("/status")
-    public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
+    public ResponseEntity<Void> setStatus(@Valid @RequestBody SetStatusRequest request,
                                           HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Set trainer status request for username: {}", username);

@@ -16,6 +16,7 @@ import dto.response.TraineeTrainingsResponse;
 import exceptions.NoSuchTraineeException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -40,7 +41,7 @@ public class TraineeController {
     private final TraineeService traineeService;
 
     @PostMapping("/register")
-    public ResponseEntity<RegResponse> register(@RequestBody TraineeRegRequest traineeRegRequest) {
+    public ResponseEntity<RegResponse> register(@Valid @RequestBody TraineeRegRequest traineeRegRequest) {
         log.debug("Received registration request for user: {} {}", traineeRegRequest.getFirstName(), traineeRegRequest.getLastName());
         RegResponse response =traineeService.createTrainee(traineeRegRequest);
         log.debug("Trainee registered successfully: {}", response.getUsername());
@@ -48,7 +49,7 @@ public class TraineeController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<JwtAuthResponse> login(@Valid @RequestBody LoginRequest request) {
         log.debug("Login attempt for username: {}", request.getUsername());
         JwtAuthResponse response = traineeService.authenticate(request);
         log.debug("Login successful for username: {}", request.getUsername());
@@ -56,7 +57,7 @@ public class TraineeController {
     }
 
     @PutMapping("/change-login")
-    public ResponseEntity<Void> changeLogin(@RequestBody ChangeLoginRequest request) {
+    public ResponseEntity<Void> changeLogin(@Valid @RequestBody ChangeLoginRequest request) {
         log.info("Change password request for username: {}", request.getUsername());
         try {
             traineeService.changePassword(request);
@@ -69,7 +70,7 @@ public class TraineeController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<TraineeProfileResponse> getProfile(@RequestBody GetProfileRequest request,
+    public ResponseEntity<TraineeProfileResponse> getProfile(@Valid @RequestBody GetProfileRequest request,
                                                              HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Profile request for username: {}", username);
@@ -90,7 +91,7 @@ public class TraineeController {
     }
 
     @PutMapping("/update-profile")
-    public ResponseEntity<TraineeProfileResponse> updateProfile(@RequestBody UpdateTraineeProfileRequest request,
+    public ResponseEntity<TraineeProfileResponse> updateProfile(@Valid @RequestBody UpdateTraineeProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Update profile request for username: {}", username);
@@ -111,7 +112,7 @@ public class TraineeController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteProfile(@RequestBody DeleteTraineeRequest request,
+    public ResponseEntity<Void> deleteProfile(@Valid @RequestBody DeleteTraineeRequest request,
                                               HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Delete trainee request for username: {}", username);
@@ -128,7 +129,7 @@ public class TraineeController {
     }
 
     @GetMapping("/not-assigned-trainers")
-    public ResponseEntity<List<TraineeProfileResponse.TrainerProfile>> getNotAssignedTrainers(@RequestBody GetProfileRequest request,
+    public ResponseEntity<List<TraineeProfileResponse.TrainerProfile>> getNotAssignedTrainers(@Valid @RequestBody GetProfileRequest request,
                                                                                         HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Fetching not-assigned trainers for username: {}", username);
@@ -144,7 +145,7 @@ public class TraineeController {
     }
 
     @GetMapping("/trainings")
-    public ResponseEntity<List<TraineeTrainingsResponse>> getTraineeTrainings(@RequestBody TraineeTrainingsRequest request,
+    public ResponseEntity<List<TraineeTrainingsResponse>> getTraineeTrainings(@Valid @RequestBody TraineeTrainingsRequest request,
                                                                         HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Fetching trainings for username: {}", username);
@@ -160,7 +161,7 @@ public class TraineeController {
     }
 
     @PatchMapping("/status")
-    public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
+    public ResponseEntity<Void> setStatus(@Valid @RequestBody SetStatusRequest request,
                                           HttpServletRequest httpRequest) {
         String username = request.getUsername();
         log.info("Set status request for username: {}", username);
