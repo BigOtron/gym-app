@@ -52,17 +52,25 @@ public class TraineeService {
     }
 
     public JwtAuthResponse authenticate(LoginRequest loginRequest) {
+        log.info("Authenticating user with username={}", loginRequest.getUsername());
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
                         loginRequest.getPassword()
                 )
         );
+        log.debug("successfully authenticated username={}", loginRequest.getUsername());
 
         Trainee trainee =  traineeRepository.selectTrainee(loginRequest.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("Trainee not found for username={}", loginRequest.getUsername());
+                    return new UsernameNotFoundException("User not found");
+                });
+        log.debug("Trainee found: username={}", trainee.getUsername());
 
         String accessToken = jwtService.generateAccessToken(trainee);
+        log.info("Generated access token for username={}", trainee.getUsername());
         return new JwtAuthResponse(accessToken, jwtService.getAccessTokenExpiration());
     }
 
@@ -74,6 +82,7 @@ public class TraineeService {
     public TraineeProfileResponse updateTraineeProfile(UpdateTraineeProfileRequest request) throws NoSuchTraineeException {
         Trainee trainee = selectTrainee(request.getUsername());
         updateTrainee(mapper.toUpdatedEntity(request, trainee));
+        log.info("Trainee profile update successful for username={}", request.getUsername());
         return mapper.toProfile(trainee);
     }
 
@@ -100,7 +109,7 @@ public class TraineeService {
         Trainee trainee = selectTrainee(username);
         trainee.setIsActive(Boolean.FALSE);
         updateTrainee(trainee);
-        log.info("Trainee username={}", username);
+        log.info("Trainee username={} deactivated", username);
     }
 
     public void deleteTrainee(String username) {
@@ -132,6 +141,7 @@ public class TraineeService {
     }
 
     public boolean isUsernameSame(HttpServletRequest request, String username) {
+        log.debug("Checking if username={} is the same as the username in the request token", username);
         return jwtService.extractUsername(getToken(request)).equals(username);
     }
 
@@ -139,6 +149,7 @@ public class TraineeService {
         Trainee trainee = selectTrainee(request.getUsername());
         TraineeProfileResponse response = mapper.toProfile(trainee);
         response.setTrainerProfiles(getTrainerProfile(trainee.getUsername()));
+        log.info("Trainee profile fetched successfully for username={}", request.getUsername());
         return response;
     }
 
@@ -178,6 +189,7 @@ public class TraineeService {
         for (Trainer t : trainers) {
             trainerProfiles.add(mapper.toTrainerProfile(t));
         }
+        log.info("Successfully mapped {} unassigned trainers for username={}", trainerProfiles.size(), username);
         return trainerProfiles;
     }
 
@@ -187,13 +199,15 @@ public class TraineeService {
         for (Training t : trainings) {
             responseList.add(mapper.toTraining(t));
         }
-
+        log.info("Successfully mapped {} trainings for username={}", responseList.size(), request.getUsername());
         return responseList;
     }
 
     public void changeStatus(SetStatusRequest request) throws NoSuchTraineeException {
-        Trainee trainee = selectTrainee(request.getUsername());
-        trainee.setIsActive(request.isActive());
-        updateTrainee(trainee);
+        if (request.isActive()) {
+            activateTrainee(request.getUsername());
+        } else {
+            deactivateTrainee(request.getUsername());
+        }
     }
 }

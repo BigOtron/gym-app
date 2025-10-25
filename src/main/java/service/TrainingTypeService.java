@@ -24,7 +24,7 @@ public class TrainingTypeService {
         for (TrainingType t : trainingTypes) {
             response.add(mapper.toResponse(t));
         }
-
+        log.debug("Fetched all training types successfully");
         return response;
     }
 }

@@ -56,7 +56,7 @@ public class TrainerService {
     }
 
     public JwtAuthResponse authenticate(LoginRequest loginRequest) {
-        log.info("Authenticating user {}", loginRequest.getUsername());
+        log.info("Authenticating trainer user {}", loginRequest.getUsername());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(),
@@ -141,6 +141,7 @@ public class TrainerService {
         Trainer trainer = selectTrainer(request.getUsername());
         TrainerProfileResponse response = trainerMapper.toProfile(trainer);
         response.setTraineeProfiles(getTraineeProfiles(trainer.getUsername()));
+        log.debug("Fetched trainer profile successfully");
         return response;
     }
 
@@ -168,6 +169,7 @@ public class TrainerService {
     public TrainerProfileResponse updateTrainerProfile(UpdateTrainerProfileRequest request) throws NoSuchTrainerException {
         Trainer trainer = selectTrainer(request.getUsername());
         updateTrainer(trainerMapper.toUpdatedEntity(request, trainer));
+        log.debug("Updated trainer profile with username={} successfully", request.getUsername());
         return trainerMapper.toProfile(trainer);
     }
 
@@ -177,7 +179,7 @@ public class TrainerService {
         for (Training t : trainings) {
             responseList.add(trainerMapper.toTrainings(t));
         }
-
+        log.debug("Fetched trainings for trainer username={} successfully", request.getUsername());
         return responseList;
     }
 

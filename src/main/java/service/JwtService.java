@@ -8,6 +8,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Getter
+@Slf4j
 public class JwtService {
 
     @Value("${security.jwt.secret-key}")
@@ -40,12 +42,14 @@ public class JwtService {
     }
 
     public String generateAccessToken(UserDetails userDetails) {
+        log.info("Generating access token for user: {}", userDetails.getUsername());
         Map<String, Object> claims = new HashMap<>();
         claims.put("roles", userDetails.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList()));
 
+        log.debug("Access token generated for user={}", userDetails.getUsername());
         return buildToken(claims, userDetails, accessTokenExpiration);
     }
 

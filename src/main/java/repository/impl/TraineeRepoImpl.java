@@ -7,6 +7,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.NoResultException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import repository.TraineeRepo;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @AllArgsConstructor
 @Repository
 public class TraineeRepoImpl implements TraineeRepo {
@@ -22,12 +24,15 @@ public class TraineeRepoImpl implements TraineeRepo {
     @Override
     public void createTrainee(Trainee trainee) {
         EntityManager entityManager = entityManagerFactory.createEntityManager();
+        log.info("Creating trainee: username={}", trainee.getUsername());
         try {
             entityManager.getTransaction().begin();
             entityManager.persist(trainee);
             entityManager.getTransaction().commit();
+            log.info("Trainee created: username={}", trainee.getUsername());
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+            log.error("Failed to create trainee: username={}, error={}", trainee.getUsername(), e.getMessage(), e);
             throw e;
         } finally {
             entityManager.close();
@@ -36,13 +41,16 @@ public class TraineeRepoImpl implements TraineeRepo {
 
     @Override
     public void updateTrainee(Trainee trainee) {
+        log.debug("Updating trainee with username={}", trainee.getUsername());
         EntityManager entityManager = entityManagerFactory.createEntityManager();
         try {
             entityManager.getTransaction().begin();
             entityManager.merge(trainee);
             entityManager.getTransaction().commit();
+            log.debug("Updated trainee with username={} successfully", trainee.getUsername());
         } catch (Exception e) {
             entityManager.getTransaction().rollback();
+            log.debug("Exception occurred with message={}", e.getMessage());
             throw e;
         } finally {
             entityManager.close();
@@ -51,12 +59,14 @@ public class TraineeRepoImpl implements TraineeRepo {
 
     @Override
     public Optional<Trainee> selectTrainee(String username) {
+        log.debug("Selecting trainee by username={}", username);
         String query = "SELECT t FROM Trainee t WHERE t.username = :username";
         try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
             return Optional.of(entityManager.createQuery(query, Trainee.class)
                     .setParameter("username", username)
                     .getSingleResult());
         } catch (NoResultException e) {
+            log.debug("No trainee found with username={}", username);
             return Optional.empty();
         }
     }
