@@ -2,6 +2,7 @@ package service;
 
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.request.SetStatusRequest;
 import dto.request.TrainerRegRequest;
 import dto.request.TrainerTrainingsRequest;
 import dto.request.UpdateTrainerProfileRequest;
@@ -28,6 +29,7 @@ import repository.TrainingTypeRepo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static utility.PasswordGenerator.generatePassword;
 
@@ -177,5 +179,11 @@ public class TrainerService {
         }
 
         return responseList;
+    }
+
+    public void changeStatus(SetStatusRequest request) throws NoSuchTrainerException {
+        Trainer trainer = selectTrainer(request.getUsername());
+        trainer.setIsActive(request.isActive());
+        updateTrainer(trainer);
     }
 }

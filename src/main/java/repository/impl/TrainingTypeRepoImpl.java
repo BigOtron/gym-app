@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import repository.TrainingTypeRepo;
 
+import java.util.List;
+
 @AllArgsConstructor
 @Repository
 public class TrainingTypeRepoImpl implements TrainingTypeRepo {
@@ -26,5 +28,13 @@ public class TrainingTypeRepoImpl implements TrainingTypeRepo {
             entityManager.close();
         }
 
+    }
+
+    @Override
+    public List<TrainingType> selectAll() {
+        try (EntityManager entityManager = entityManagerFactory.createEntityManager()) {
+            return entityManager.createQuery("SELECT t FROM TrainingType t", TrainingType.class)
+                    .getResultList();
+        }
     }
 }

@@ -2,6 +2,7 @@ package controller.v1;
 
 import dto.request.GetProfileRequest;
 import dto.request.LoginRequest;
+import dto.request.SetStatusRequest;
 import dto.request.TrainerRegRequest;
 import dto.request.TrainerTrainingsRequest;
 import dto.request.UpdateTrainerProfileRequest;
@@ -13,6 +14,7 @@ import exceptions.NoSuchTrainerException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,5 +86,21 @@ public class TrainerController {
         }
         List<TrainerTrainingsResponse> trainingsResponses = trainerService.getTrainerTrainings(request);
         return ResponseEntity.ok(trainingsResponses);
+    }
+
+    @PatchMapping("/status")
+    public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
+                                          HttpServletRequest httpRequest) {
+        // check if username and token username match
+        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+            return ResponseEntity.badRequest().build();
+        }
+        try {
+            trainerService.changeStatus(request);
+        } catch (NoSuchTrainerException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

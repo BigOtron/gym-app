@@ -194,6 +194,6 @@ public class TraineeService {
     public void changeStatus(SetStatusRequest request) throws NoSuchTraineeException {
         Trainee trainee = selectTrainee(request.getUsername());
         trainee.setIsActive(request.isActive());
-        traineeRepository.updateTrainee(trainee);
+        updateTrainee(trainee);
     }
 }
