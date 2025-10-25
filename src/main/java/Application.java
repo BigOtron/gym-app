@@ -5,7 +5,7 @@ import org.springframework.context.annotation.PropertySource;
 
 @Configuration
 @PropertySource("classpath:application.properties")
-@SpringBootApplication(scanBasePackages = {"entity", "service", "controller", "repository", "configuration", "mapper"})
+@SpringBootApplication(scanBasePackages = {"entity", "service", "controller", "repository", "configuration", "mapper", "logging"})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
