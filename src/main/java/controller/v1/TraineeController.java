@@ -16,6 +16,7 @@ import dto.response.TraineeTrainingsResponse;
 import exceptions.NoSuchTraineeException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,6 +30,7 @@ import service.TraineeService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @AllArgsConstructor
 @RequestMapping(value = "/api/v1/trainees", consumes = "application/json", produces = "application/json")
@@ -37,22 +39,29 @@ public class TraineeController {
 
     @PostMapping("/register")
     public ResponseEntity<RegResponse> register(@RequestBody TraineeRegRequest traineeRegRequest) {
+        log.debug("Received registration request for user: {} {}", traineeRegRequest.getFirstName(), traineeRegRequest.getLastName());
         RegResponse response =traineeService.createTrainee(traineeRegRequest);
+        log.debug("Trainee registered successfully: {}", response.getUsername());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+        log.debug("Login attempt for username: {}", request.getUsername());
         JwtAuthResponse response = traineeService.authenticate(request);
+        log.debug("Login successful for username: {}", request.getUsername());
         return ResponseEntity.ok(response);
     }
 
     @PutMapping("/change-login")
     public ResponseEntity<Void> changeLogin(@RequestBody ChangeLoginRequest request) {
+        log.info("Change password request for username: {}", request.getUsername());
         try {
             traineeService.changePassword(request);
+            log.info("Password changed successfully for username: {}", request.getUsername());
             return ResponseEntity.ok().build();
         } catch (NoSuchTraineeException e) {
+            log.warn("Trainee not found while changing password: {}", request.getUsername());
             return ResponseEntity.notFound().build();
         }
     }
@@ -60,15 +69,20 @@ public class TraineeController {
     @GetMapping("/me")
     public ResponseEntity<TraineeProfileResponse> getProfile(@RequestBody GetProfileRequest request,
                                                              HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Profile request for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized profile access attempt by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
 
         try {
             TraineeProfileResponse profile = traineeService.getTraineeProfile(request);
+            log.info("Profile retrieved successfully for username: {}", username);
             return ResponseEntity.ok(profile);
         } catch (NoSuchTraineeException e) {
+            log.warn("Trainee not found while retrieving profile: {}", username);
             return ResponseEntity.notFound().build();
         }
     }
@@ -76,27 +90,37 @@ public class TraineeController {
     @PutMapping("/update-profile")
     public ResponseEntity<TraineeProfileResponse> updateProfile(@RequestBody UpdateTraineeProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Update profile request for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized update attempt by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        TraineeProfileResponse response = null;
+
         try {
-            response = traineeService.updateTraineeProfile(request);
+            TraineeProfileResponse response = traineeService.updateTraineeProfile(request);
+            log.info("Profile updated successfully for username: {}", username);
+            return ResponseEntity.ok(response);
         } catch (NoSuchTraineeException e) {
+            log.warn("Trainee not found while updating profile: {}", username);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> deleteProfile(@RequestBody DeleteTraineeRequest request,
                                               HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Delete trainee request for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized delete attempt by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        traineeService.deleteTrainee(request.getUsername());
+
+        traineeService.deleteTrainee(username);
+        log.info("Trainee deleted successfully: {}", username);
         return ResponseEntity.ok().build();
 
     }
@@ -104,37 +128,52 @@ public class TraineeController {
     @GetMapping("/not-assigned-trainers")
     public ResponseEntity<List<TraineeProfileResponse.TrainerProfile>> getNotAssignedTrainers(@RequestBody GetProfileRequest request,
                                                                                         HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Fetching not-assigned trainers for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized request for not-assigned trainers by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        List<TraineeProfileResponse.TrainerProfile> trainerProfiles = traineeService.getNotAssignedTrainers(request.getUsername());
-        return ResponseEntity.ok(trainerProfiles);
+
+        List<TraineeProfileResponse.TrainerProfile> trainers = traineeService.getNotAssignedTrainers(username);
+        log.info("Retrieved {} unassigned trainers for username: {}", trainers.size(), username);
+        return ResponseEntity.ok(trainers);
     }
 
     @GetMapping("/trainings")
     public ResponseEntity<List<TraineeTrainingsResponse>> getTraineeTrainings(@RequestBody TraineeTrainingsRequest request,
                                                                         HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Fetching trainings for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized training access attempt by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        List<TraineeTrainingsResponse> trainingsResponse = traineeService.getTraineeTrainings(request);
-        return ResponseEntity.ok(trainingsResponse);
+
+        List<TraineeTrainingsResponse> trainings = traineeService.getTraineeTrainings(request);
+        log.info("Retrieved {} trainings for username: {}", trainings.size(), username);
+        return ResponseEntity.ok(trainings);
     }
 
     @PatchMapping("/status")
     public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
                                           HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!traineeService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Set status request for username: {}", username);
+
+        if (!traineeService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized status change attempt by token username: {}", username);
             return ResponseEntity.badRequest().build();
         }
 
         try {
             traineeService.changeStatus(request);
+            log.info("Status updated successfully for username: {}", username);
         } catch (NoSuchTraineeException e) {
-            ResponseEntity.notFound().build();
+            log.warn("Trainee not found while changing status: {}", username);
+            return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok().build();
     }
