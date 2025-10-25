@@ -12,6 +12,8 @@ import dto.response.TrainerProfileResponse;
 import dto.response.TrainerTrainingsResponse;
 import exceptions.NoSuchTrainerException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,39 +26,46 @@ import service.TrainerService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainers", consumes = "application/json", produces = "application/json")
 public class TrainerController {
     private final TrainerService trainerService;
 
-    public TrainerController(TrainerService trainerService) {
-        this.trainerService = trainerService;
-    }
-
     @PostMapping("/register")
     public ResponseEntity<RegResponse> register(@RequestBody TrainerRegRequest trainerRegRequest) {
+        log.info("Received trainer registration request for name: {}", trainerRegRequest.getFirstName());
         RegResponse response = trainerService.createTrainer(trainerRegRequest);
+        log.info("Trainer registered successfully: {}", response.getUsername());
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+        log.info("Trainer login attempt for username: {}", request.getUsername());
         JwtAuthResponse response = trainerService.authenticate(request);
+        log.info("Trainer login successful for username: {}", request.getUsername());
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/me")
     public ResponseEntity<TrainerProfileResponse> getProfile(@RequestBody GetProfileRequest request,
                                                              HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Profile request for trainer username: {}", username);
+
+        if (!trainerService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized profile access attempt by token user for trainer: {}", username);
             return ResponseEntity.badRequest().build();
         }
 
         try {
             TrainerProfileResponse profile = trainerService.getTrainerProfile(request);
+            log.info("Trainer profile retrieved successfully: {}", username);
             return ResponseEntity.ok(profile);
         } catch (NoSuchTrainerException e) {
+            log.warn("Trainer not found while retrieving profile: {}", username);
             return ResponseEntity.notFound().build();
         }
     }
@@ -64,40 +73,56 @@ public class TrainerController {
     @PutMapping("/update-profile")
     public ResponseEntity<TrainerProfileResponse> updateProfile(@RequestBody UpdateTrainerProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Update trainer profile request for username: {}", username);
+
+        if (!trainerService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized profile update attempt by token user for trainer: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        TrainerProfileResponse response = null;
+
         try {
-            response = trainerService.updateTrainerProfile(request);
+            TrainerProfileResponse response = trainerService.updateTrainerProfile(request);
+            log.info("Trainer profile updated successfully: {}", username);
+            return ResponseEntity.ok(response);
         } catch (NoSuchTrainerException e) {
+            log.warn("Trainer not found while updating profile: {}", username);
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/trainings")
     public ResponseEntity<List<TrainerTrainingsResponse>> getTrainerTrainings(@RequestBody TrainerTrainingsRequest request,
                                                                               HttpServletRequest httpRequest) {
-         // check if username and token username match
-        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Fetching trainings for trainer username: {}", username);
+
+        if (!trainerService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized access attempt to trainings by token user for trainer: {}", username);
             return ResponseEntity.badRequest().build();
         }
-        List<TrainerTrainingsResponse> trainingsResponses = trainerService.getTrainerTrainings(request);
-        return ResponseEntity.ok(trainingsResponses);
+
+        List<TrainerTrainingsResponse> trainings = trainerService.getTrainerTrainings(request);
+        log.info("Retrieved {} trainings for trainer: {}", trainings.size(), username);
+        return ResponseEntity.ok(trainings);
     }
 
     @PatchMapping("/status")
     public ResponseEntity<Void> setStatus(@RequestBody SetStatusRequest request,
                                           HttpServletRequest httpRequest) {
-        // check if username and token username match
-        if (!trainerService.isUsernameSame(httpRequest, request.getUsername())) {
+        String username = request.getUsername();
+        log.info("Set trainer status request for username: {}", username);
+
+        if (!trainerService.isUsernameSame(httpRequest, username)) {
+            log.warn("Unauthorized status change attempt by token user for trainer: {}", username);
             return ResponseEntity.badRequest().build();
         }
+
         try {
             trainerService.changeStatus(request);
+            log.info("Trainer status updated successfully: {}", username);
         } catch (NoSuchTrainerException e) {
+            log.warn("Trainer not found while changing status: {}", username);
             return ResponseEntity.notFound().build();
         }
 
