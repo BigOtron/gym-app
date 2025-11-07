@@ -1,3 +1,0 @@
-1,Ali,Murodov,cardio,running
-2,Donyor,Ilhomov,weightlifting,pull_up,push_up
-3,Olympiada,Baranova,yoga,cardio,running
