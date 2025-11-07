@@ -37,7 +37,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = "/api/v1/trainees", consumes = "application/json", produces = "application/json")
 @Tag(name = "Trainees", description = "Operations related to trainee accounts and profiles")
-public class TraineeController {
+public class TraineeControllerV1 {
     private final TraineeService traineeService;
 
     @PostMapping("/register")

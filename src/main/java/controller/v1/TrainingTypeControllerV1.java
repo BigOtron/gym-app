@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping(value = "/api/v1/training-type", produces = "application/json")
 @RequiredArgsConstructor
 @Tag(name = "TrainingType", description = "Operations related to training type management")
-public class TrainingTypeController {
+public class TrainingTypeControllerV1 {
     private final TrainingTypeService trainingTypeService;
 
     @GetMapping("/")

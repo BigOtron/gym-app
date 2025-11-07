@@ -33,7 +33,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/v1/trainers", consumes = "application/json", produces = "application/json")
 @Tag(name = "Trainers", description = "Operations related to trainer accounts and profiles")
-public class TrainerController {
+public class TrainerControllerV1 {
     private final TrainerService trainerService;
 
     @PostMapping("/register")

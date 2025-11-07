@@ -21,7 +21,7 @@ import service.TrainingService;
 @RestController
 @Slf4j
 @Tag(name = "Training", description = "Operations related to trainings management")
-public class TrainingController {
+public class TrainingControllerV1 {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
 
