@@ -25,7 +25,7 @@ public class TrainingControllerV1 {
     private final TrainingService trainingService;
     private final TraineeService traineeService;
 
-    @PostMapping("/create")
+    @PostMapping("/")
     public ResponseEntity<Void> createTraining(@Valid @RequestBody CreateTrainingRequest request,
                                                HttpServletRequest httpRequest) {
         log.info("Creating training: trainee={}, trainer={}, training name={}",

@@ -56,7 +56,7 @@ public class TraineeControllerV1 {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/change-login")
+    @PutMapping("/change-password")
     public ResponseEntity<Void> changeLogin(@Valid @RequestBody ChangeLoginRequest request) {
         log.info("Change password request for username: {}", request.getUsername());
         try {
@@ -90,7 +90,7 @@ public class TraineeControllerV1 {
         }
     }
 
-    @PutMapping("/update-profile")
+    @PutMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> updateProfile(@Valid @RequestBody UpdateTraineeProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
         String username = request.getUsername();
@@ -111,7 +111,7 @@ public class TraineeControllerV1 {
         }
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteProfile(@Valid @RequestBody DeleteTraineeRequest request,
                                               HttpServletRequest httpRequest) {
         String username = request.getUsername();

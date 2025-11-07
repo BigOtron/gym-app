@@ -73,7 +73,7 @@ public class TrainerControllerV1 {
         }
     }
 
-    @PutMapping("/update-profile")
+    @PutMapping("/profile")
     public ResponseEntity<TrainerProfileResponse> updateProfile(@Valid @RequestBody UpdateTrainerProfileRequest request,
                                                                 HttpServletRequest httpRequest) {
         String username = request.getUsername();
