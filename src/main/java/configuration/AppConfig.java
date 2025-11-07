@@ -21,7 +21,7 @@ public class AppConfig {
     private final TrainerRepo trainerRepo;
 
     @Bean
-    UserDetailsService userDetailsService() {
+    public UserDetailsService userDetailsService() {
         return username -> traineeRepo.selectTrainee(username)
                 .<UserDetails>map(user -> user)
                 .or(() -> trainerRepo.selectTrainer(username)
@@ -30,7 +30,7 @@ public class AppConfig {
     }
 
     @Bean
-    BCryptPasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
@@ -40,7 +40,7 @@ public class AppConfig {
     }
 
     @Bean
-    AuthenticationProvider authenticationProvider() {
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         authProvider.setUserDetailsService(userDetailsService());
