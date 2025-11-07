@@ -1,5 +1,7 @@
 package entity;
 
+import gymapp.entity.Trainer;
+import gymapp.entity.TrainingType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

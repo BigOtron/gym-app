@@ -34,11 +34,10 @@ ext {
     actuatorVersion = '3.5.5'
     prometheusClient = '0.16.0'
     micrometerPrometheus = '1.15.5'
+    springDataJpaVersion = '3.5.5'
 }
 
 dependencies {
-    implementation group: 'jakarta.persistence', name: 'jakarta.persistence-api', version: jpaVersion
-    implementation group: 'org.hibernate.orm', name: 'hibernate-core', version: hibernateVersion
     implementation group: 'org.postgresql', name: 'postgresql', version: postgreVersion
     implementation group: 'org.springframework', name: 'spring-context', version: springVersion
     implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: jakartaAnnotationVersion
@@ -58,6 +57,8 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: actuatorVersion
     implementation group: 'io.prometheus', name: 'simpleclient', version: prometheusClient
     implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: micrometerPrometheus
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa', version: springDataJpaVersion
+
     testImplementation group: 'org.springframework', name: 'spring-test', version: springTestVersion
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion

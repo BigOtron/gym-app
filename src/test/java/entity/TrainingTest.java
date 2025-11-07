@@ -1,5 +1,9 @@
 package entity;
 
+import gymapp.entity.Trainee;
+import gymapp.entity.Trainer;
+import gymapp.entity.Training;
+import gymapp.entity.TrainingType;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
