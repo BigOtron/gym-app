@@ -1,5 +1,7 @@
 package gymapp.configuration;
 
+import gymapp.exceptions.BruteForceException;
+import gymapp.service.LoginAttemptService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,13 +24,14 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver handlerExceptionResolver;
-
+    private final LoginAttemptService loginAttemptService;
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
 
     // I think i should keep this explicit constructor because I have two beans of type HandlerExceptionResolver
     // So as a solution to specify which bean I want to use, I used @Qualifier in this explicit constructor
     public JwtAuthFilter(
+            LoginAttemptService loginAttemptService,
             JwtService jwtService,
             UserDetailsService userDetailsService,
             @Qualifier("handlerExceptionResolver") HandlerExceptionResolver handlerExceptionResolver
@@ -36,6 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
         this.handlerExceptionResolver = handlerExceptionResolver;
+        this.loginAttemptService = loginAttemptService;
     }
 
     @Override
@@ -44,6 +48,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
+        String clientIP = loginAttemptService.getClientIP(request);
+        if (loginAttemptService.isBlocked(clientIP)) {
+            handlerExceptionResolver.resolveException(
+                    request,
+                    response,
+                    null,
+                    new BruteForceException("Multiple unsuccessful attempts to log in")
+            );
+            return;
+        }
         final String authHeader = request.getHeader("Authorization");
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
