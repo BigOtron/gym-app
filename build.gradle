@@ -31,6 +31,9 @@ ext {
     springAOPVersion = '3.5.6'
     springFoxVersion = '3.0.0'
     openApiVersion = '2.6.0'
+    actuatorVersion = '3.5.5'
+    prometheusClient = '0.16.0'
+    micrometerPrometheus = '1.15.5'
 }
 
 dependencies {
@@ -52,11 +55,9 @@ dependencies {
     runtimeOnly group: 'io.jsonwebtoken', name: 'jjwt-jackson', version: jwtVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-aop', version: springAOPVersion
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: openApiVersion
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: '3.5.5'
-    // https://mvnrepository.com/artifact/io.prometheus/simpleclient
-    implementation group: 'io.prometheus', name: 'simpleclient', version: '0.16.0'
-// https://mvnrepository.com/artifact/io.micrometer/micrometer-registry-prometheus
-    implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: '1.15.5'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-actuator', version: actuatorVersion
+    implementation group: 'io.prometheus', name: 'simpleclient', version: prometheusClient
+    implementation group: 'io.micrometer', name: 'micrometer-registry-prometheus', version: micrometerPrometheus
     testImplementation group: 'org.springframework', name: 'spring-test', version: springTestVersion
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junitVersion
     testImplementation group: 'org.mockito', name: 'mockito-core', version: mockitoVersion
