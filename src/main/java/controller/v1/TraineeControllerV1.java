@@ -57,21 +57,16 @@ public class TraineeControllerV1 {
     }
 
     @PutMapping("/change-password")
-    public ResponseEntity<Void> changeLogin(@Valid @RequestBody ChangeLoginRequest request) {
+    public ResponseEntity<Void> changeLogin(@Valid @RequestBody ChangeLoginRequest request) throws NoSuchTraineeException {
         log.info("Change password request for username: {}", request.getUsername());
-        try {
-            traineeService.changePassword(request);
-            log.info("Password changed successfully for username: {}", request.getUsername());
-            return ResponseEntity.ok().build();
-        } catch (NoSuchTraineeException e) {
-            log.warn("Trainee not found while changing password: {}", request.getUsername());
-            return ResponseEntity.notFound().build();
-        }
+        traineeService.changePassword(request);
+        log.info("Password changed successfully for username: {}", request.getUsername());
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/me")
     public ResponseEntity<TraineeProfileResponse> getProfile(@Valid @RequestBody GetProfileRequest request,
-                                                             HttpServletRequest httpRequest) {
+                                                             HttpServletRequest httpRequest) throws NoSuchTraineeException{
         String username = request.getUsername();
         log.info("Profile request for username: {}", username);
 
@@ -80,19 +75,16 @@ public class TraineeControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            TraineeProfileResponse profile = traineeService.getTraineeProfile(request);
-            log.info("Profile retrieved successfully for username: {}", username);
-            return ResponseEntity.ok(profile);
-        } catch (NoSuchTraineeException e) {
-            log.warn("Trainee not found while retrieving profile: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+
+        TraineeProfileResponse profile = traineeService.getTraineeProfile(request);
+        log.info("Profile retrieved successfully for username: {}", username);
+        return ResponseEntity.ok(profile);
+
     }
 
     @PutMapping("/profile")
     public ResponseEntity<TraineeProfileResponse> updateProfile(@Valid @RequestBody UpdateTraineeProfileRequest request,
-                                                                HttpServletRequest httpRequest) {
+                                                                HttpServletRequest httpRequest) throws NoSuchTraineeException{
         String username = request.getUsername();
         log.info("Update profile request for username: {}", username);
 
@@ -101,14 +93,11 @@ public class TraineeControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            TraineeProfileResponse response = traineeService.updateTraineeProfile(request);
-            log.info("Profile updated successfully for username: {}", username);
-            return ResponseEntity.ok(response);
-        } catch (NoSuchTraineeException e) {
-            log.warn("Trainee not found while updating profile: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+
+        TraineeProfileResponse response = traineeService.updateTraineeProfile(request);
+        log.info("Profile updated successfully for username: {}", username);
+        return ResponseEntity.ok(response);
+
     }
 
     @DeleteMapping("/profile")
@@ -162,7 +151,7 @@ public class TraineeControllerV1 {
 
     @PatchMapping("/status")
     public ResponseEntity<Void> setStatus(@Valid @RequestBody SetStatusRequest request,
-                                          HttpServletRequest httpRequest) {
+                                          HttpServletRequest httpRequest) throws NoSuchTraineeException{
         String username = request.getUsername();
         log.info("Set status request for username: {}", username);
 
@@ -171,13 +160,8 @@ public class TraineeControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            traineeService.changeStatus(request);
-            log.info("Status updated successfully for username: {}", username);
-        } catch (NoSuchTraineeException e) {
-            log.warn("Trainee not found while changing status: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+        traineeService.changeStatus(request);
+        log.info("Status updated successfully for username: {}", username);
         return ResponseEntity.ok().build();
     }
 }

@@ -27,7 +27,7 @@ public class TrainingControllerV1 {
 
     @PostMapping("/")
     public ResponseEntity<Void> createTraining(@Valid @RequestBody CreateTrainingRequest request,
-                                               HttpServletRequest httpRequest) {
+                                               HttpServletRequest httpRequest) throws NoSuchTrainerException, NoSuchTraineeException{
         log.info("Creating training: trainee={}, trainer={}, training name={}",
                 request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());
         if (!traineeService.isUsernameSame(httpRequest, request.getTraineeUsername())) {
@@ -35,14 +35,10 @@ public class TrainingControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            trainingService.createTraining(request);
-            log.info("Training successfully created: trainee={}, trainer={}, trainingName={}",
-                    request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());
-        } catch (NoSuchTraineeException | NoSuchTrainerException e) {
-            log.warn("Training creation failed (missing user): {}", e.getMessage());
-            return ResponseEntity.notFound().build();
-        }
+        trainingService.createTraining(request);
+        log.info("Training successfully created: trainee={}, trainer={}, trainingName={}",
+                request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());
+
         return ResponseEntity.ok().build();
     }
 }

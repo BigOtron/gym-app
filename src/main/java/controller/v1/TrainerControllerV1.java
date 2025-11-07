@@ -54,7 +54,7 @@ public class TrainerControllerV1 {
 
     @GetMapping("/me")
     public ResponseEntity<TrainerProfileResponse> getProfile(@Valid @RequestBody GetProfileRequest request,
-                                                             HttpServletRequest httpRequest) {
+                                                             HttpServletRequest httpRequest) throws NoSuchTrainerException{
         String username = request.getUsername();
         log.info("Profile request for trainer username: {}", username);
 
@@ -63,19 +63,15 @@ public class TrainerControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            TrainerProfileResponse profile = trainerService.getTrainerProfile(request);
-            log.info("Trainer profile retrieved successfully: {}", username);
-            return ResponseEntity.ok(profile);
-        } catch (NoSuchTrainerException e) {
-            log.warn("Trainer not found while retrieving profile: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+        TrainerProfileResponse profile = trainerService.getTrainerProfile(request);
+        log.info("Trainer profile retrieved successfully: {}", username);
+        return ResponseEntity.ok(profile);
+
     }
 
     @PutMapping("/profile")
     public ResponseEntity<TrainerProfileResponse> updateProfile(@Valid @RequestBody UpdateTrainerProfileRequest request,
-                                                                HttpServletRequest httpRequest) {
+                                                                HttpServletRequest httpRequest) throws NoSuchTrainerException{
         String username = request.getUsername();
         log.info("Update trainer profile request for username: {}", username);
 
@@ -84,14 +80,10 @@ public class TrainerControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            TrainerProfileResponse response = trainerService.updateTrainerProfile(request);
-            log.info("Trainer profile updated successfully: {}", username);
-            return ResponseEntity.ok(response);
-        } catch (NoSuchTrainerException e) {
-            log.warn("Trainer not found while updating profile: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+        TrainerProfileResponse response = trainerService.updateTrainerProfile(request);
+        log.info("Trainer profile updated successfully: {}", username);
+        return ResponseEntity.ok(response);
+
     }
 
     @GetMapping("/trainings")
@@ -112,7 +104,7 @@ public class TrainerControllerV1 {
 
     @PatchMapping("/status")
     public ResponseEntity<Void> setStatus(@Valid @RequestBody SetStatusRequest request,
-                                          HttpServletRequest httpRequest) {
+                                          HttpServletRequest httpRequest) throws NoSuchTrainerException{
         String username = request.getUsername();
         log.info("Set trainer status request for username: {}", username);
 
@@ -121,13 +113,10 @@ public class TrainerControllerV1 {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            trainerService.changeStatus(request);
-            log.info("Trainer status updated successfully: {}", username);
-        } catch (NoSuchTrainerException e) {
-            log.warn("Trainer not found while changing status: {}", username);
-            return ResponseEntity.notFound().build();
-        }
+
+        trainerService.changeStatus(request);
+        log.info("Trainer status updated successfully: {}", username);
+
 
         return ResponseEntity.ok().build();
     }
