@@ -13,11 +13,14 @@ public class DateOfBirthValidator implements ConstraintValidator<ValidDateOfBirt
         if (value == null) {
             return true;
         }
-        Date today = new Date();
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.YEAR, -150);
-        Date limit = cal.getTime();
+        cal.add(Calendar.YEAR, -120);
+        Date oldestAllowedYear = cal.getTime();
 
-        return value.before(today) && value.after(limit);
+        cal = Calendar.getInstance();
+        cal.add(Calendar.YEAR, -18);
+        Date youngestAllowedYear = cal.getTime();
+
+        return value.after(oldestAllowedYear) && value.before(youngestAllowedYear);
     }
 }

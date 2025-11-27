@@ -20,6 +20,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -37,6 +38,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = "/api/v1/trainees", consumes = "application/json", produces = "application/json")
 @Tag(name = "Trainees", description = "Operations related to trainee accounts and profiles")
+@Validated
 public class TraineeControllerV1 {
     private final TraineeService traineeService;
 

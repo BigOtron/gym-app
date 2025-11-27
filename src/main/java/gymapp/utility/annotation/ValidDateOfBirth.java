@@ -12,10 +12,10 @@ import java.lang.annotation.Target;
 
 @Documented
 @Constraint(validatedBy = DateOfBirthValidator.class)
-@Target({ ElementType.FIELD })
+@Target({ ElementType.FIELD , ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidDateOfBirth {
-    String message() default "Date of birth must be in the past and not more than 150 years ago";
+    String message() default "Date of birth must be in the range of 18 to 120 years";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }
