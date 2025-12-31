@@ -1,0 +1,44 @@
+package gymapp.controller.v1;
+
+import gymapp.dto.request.CreateTrainingRequest;
+import gymapp.exceptions.NoSuchTraineeException;
+import gymapp.exceptions.NoSuchTrainerException;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import gymapp.service.TraineeService;
+import gymapp.service.TrainingService;
+
+@RequestMapping(value = "/api/v1/training", consumes = "application/json", produces = "application/json")
+@RequiredArgsConstructor
+@RestController
+@Slf4j
+@Tag(name = "Training", description = "Operations related to trainings management")
+public class TrainingControllerV1 {
+    private final TrainingService trainingService;
+    private final TraineeService traineeService;
+
+    @PostMapping("/")
+    public ResponseEntity<Void> createTraining(@Valid @RequestBody CreateTrainingRequest request,
+                                               HttpServletRequest httpRequest) throws NoSuchTrainerException, NoSuchTraineeException{
+        log.info("Creating training: trainee={}, trainer={}, training name={}",
+                request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());
+        if (!traineeService.isUsernameSame(httpRequest, request.getTraineeUsername())) {
+            log.warn("Training creation denied: username in token != traineeUsername ({})", request.getTraineeUsername());
+            return ResponseEntity.badRequest().build();
+        }
+
+        trainingService.createTraining(request);
+        log.info("Training successfully created: trainee={}, trainer={}, trainingName={}",
+                request.getTraineeUsername(), request.getTrainerUsername(), request.getTrainingName());
+
+        return ResponseEntity.ok().build();
+    }
+}
